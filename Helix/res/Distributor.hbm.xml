@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="ua.mamamusic.accountancy.model.Distributor" table="DISTRIBUTORS">
+	<id name="id" column="ID" type="long">
+		<generator class="native">
+		</generator>
+	</id>
+	<property name="name" column="NAME" type="string"></property>
+	<property name="columnCount" column="COLUMN_COUNT" type="integer"></property>
+	<property name="columnId" column="COLUMN_ID" type="integer"></property>
+	<property name="columnPrice" column="COLUMN_PRICE" type="integer"></property>
+	<property name="columnArtist" column="COLUMN_ARTIST" type="integer"></property>
+	<property name="columnTrack" column="COLUMN_TRACK" type="integer"></property>
+	<property name="columnTrackType" column="COLUMN_TRACK_TYPE" type="integer"></property>
+	<property name="columnQuantity" column="COLUMN_QUANTITY" type="integer"></property>
+	 <set name="aliasSet" table="DISTRIBUTOR_ALIAS"  cascade="all" lazy="false" fetch="select">
+           <key column="DISTRIBUTOR_ID"  />
+            <one-to-many class="ua.mamamusic.accountancy.model.DistributorAlias" />
+        </set>
+</class>
+</hibernate-mapping>

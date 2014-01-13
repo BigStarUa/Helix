@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="ua.mamamusic.accountancy.model.Artist" table="ARTISTS">
+	<id name="id" column="ID" type="long">
+		<generator class="native">
+		</generator>
+	</id>
+	<property name="name" column="NAME" type="string"></property>
+	 <set name="aliasSet" table="ARTISTS_ALIAS"  cascade="all" lazy="false" fetch="select">
+           <key column="ARTIST_ID"  />
+           <one-to-many class="ua.mamamusic.accountancy.model.ArtistAlias" />
+     </set>
+     <set name="trackSet" table="TRACKS" order-by="name" cascade="all" lazy="false" fetch="select">
+           <key column="ARTIST_ID"  />
+           <one-to-many class="ua.mamamusic.accountancy.model.Track" />
+     </set>
+</class>
+</hibernate-mapping>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<property name="dialect">ua.mamamusic.accountancy.SQLiteDialect</property>
+		<property name="connection.driver_class">org.sqlite.JDBC</property>
+		<property name="connection.url">jdbc:sqlite:base.db</property>
+		<property name="connection.username"></property>
+		<property name="connection.password"></property>
+        <property name="show_sql">true</property>
+		<property name="current_session_context_class">thread</property> 
+		<mapping resource="Distributor.hbm.xml"/>
+		<mapping resource="DistributorAlias.hbm.xml"/>
+		<mapping resource="Artist.hbm.xml"/>
+		<mapping resource="ArtistAlias.hbm.xml"/>
+		<mapping resource="Track.hbm.xml"/>
+		<mapping resource="TrackAlias.hbm.xml"/>
+		<mapping resource="TrackType.hbm.xml"/>
+		<mapping resource="TrackTypeAlias.hbm.xml"/>
+		<mapping resource="DataRow.hbm.xml"/>
+	</session-factory>
+</hibernate-configuration>
