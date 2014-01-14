@@ -16,6 +16,9 @@ public class Distributor {
 	private int columnQuantity;
 	private Set<DistributorAlias> aliasSet;
 	
+	private int authorRights;
+	private int relatedRights;
+	
 	
 	public long getId() {
 		return id;
@@ -86,6 +89,18 @@ public class Distributor {
 	}
 	public void setColumnQuantity(int columnQuantity) {
 		this.columnQuantity = columnQuantity;
+	}
+	public int getAuthorRights() {
+		return authorRights;
+	}
+	public void setAuthorRights(int authorRights) {
+		this.authorRights = authorRights;
+	}
+	public int getRelatedRights() {
+		return relatedRights;
+	}
+	public void setRelatedRights(int relatedRights) {
+		this.relatedRights = relatedRights;
 	}
 	
 	

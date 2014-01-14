@@ -53,6 +53,10 @@ import java.awt.Rectangle;
 import javax.swing.JList;
 import javax.swing.JToolBar;
 import javax.swing.border.MatteBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.BoxLayout;
+import javax.swing.Box;
+import javax.swing.UIManager;
 
 public class DistributorForm extends AbstractJDialog implements DistributerAliasListListener{
 
@@ -74,6 +78,8 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 	private JTextField txtTrack;
 	private JTextField txtType;
 	private JTextField txtColumnquantity;
+	private JTextField txtAuthor;
+	private JTextField txtRelated;
 
 	public DistributorForm(Window owner, String title, ModalityType modalityType, Distributor distributor, DistributorsListListener listener) {
 		super(owner, title, modalityType);
@@ -96,6 +102,9 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 			txtTrack.setText(String.valueOf(distributor.getColumnTrack()));
 			txtType.setText(String.valueOf(distributor.getColumnTrackType()));
 			txtColumnquantity.setText(String.valueOf(distributor.getColumnQuantity()));
+			txtAuthor.setText(String.valueOf(distributor.getAuthorRights()));
+			txtRelated.setText(String.valueOf(distributor.getRelatedRights()));
+			
 			
 			model = new GenericListModel<>(new ArrayList<>(distributor.getAliasSet()));
 			aliasList.setModel(model);;
@@ -276,8 +285,61 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 					panelCharacteristic.add(lblColumnQuantity);
 					
 				}
+				{
+					JPanel panelRights = new JPanel();
+					tabbedPane.addTab("Rights", null, panelRights, null);
+					panelRights.setLayout(null);
+					
+					JPanel panel = new JPanel();
+					panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Rights, Total 100%", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+					panel.setBounds(10, 11, 130, 73);
+					panelRights.add(panel);
+					panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+					
+					Box verticalBox = Box.createVerticalBox();
+					panel.add(verticalBox);
+					
+					Box horizontalBox_1 = Box.createHorizontalBox();
+					verticalBox.add(horizontalBox_1);
+					
+					JLabel lblAuthor = new JLabel("Author:");
+					horizontalBox_1.add(lblAuthor);
+					lblAuthor.setFont(new Font("Tahoma", Font.PLAIN, 14));
+					
+					Component rigidArea = Box.createRigidArea(new Dimension(10, 20));
+					horizontalBox_1.add(rigidArea);
+					
+					txtAuthor = new JTextField();
+					horizontalBox_1.add(txtAuthor);
+					txtAuthor.setColumns(10);
+					
+					JLabel label = new JLabel("%");
+					horizontalBox_1.add(label);
+					
+					Component rigidArea_2 = Box.createRigidArea(new Dimension(20, 10));
+					verticalBox.add(rigidArea_2);
+					
+					Box horizontalBox = Box.createHorizontalBox();
+					verticalBox.add(horizontalBox);
+					
+					JLabel lblRelated = new JLabel("Related:");
+					lblRelated.setFont(new Font("Tahoma", Font.PLAIN, 14));
+					horizontalBox.add(lblRelated);
+					
+					Component rigidArea_1 = Box.createRigidArea(new Dimension(8, 20));
+					horizontalBox.add(rigidArea_1);
+					
+					txtRelated = new JTextField();
+					horizontalBox.add(txtRelated);
+					txtRelated.setColumns(10);
+					
+					JLabel label_1 = new JLabel("%");
+					horizontalBox.add(label_1);
+				}
 			}
 		}
+		
+		
 		{
 		JTextArea txtrComment = new JTextArea();
 		txtrComment.setFont(new Font("Monospaced", Font.PLAIN, 14));
@@ -340,6 +402,8 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 			distributor.setColumnTrack(Integer.valueOf(txtTrack.getText()));
 			distributor.setColumnTrackType(Integer.valueOf(txtType.getText()));
 			distributor.setColumnQuantity(Integer.valueOf(txtColumnquantity.getText()));
+			distributor.setAuthorRights(Integer.valueOf(txtAuthor.getText()));
+			distributor.setRelatedRights(Integer.valueOf(txtRelated.getText()));
 			
 			Set<DistributorAlias> set = new HashSet<DistributorAlias>();
 			set.addAll(model.getList());

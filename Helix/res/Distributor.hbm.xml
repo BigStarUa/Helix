@@ -15,9 +15,11 @@
 	<property name="columnTrack" column="COLUMN_TRACK" type="integer"></property>
 	<property name="columnTrackType" column="COLUMN_TRACK_TYPE" type="integer"></property>
 	<property name="columnQuantity" column="COLUMN_QUANTITY" type="integer"></property>
-	 <set name="aliasSet" table="DISTRIBUTOR_ALIAS"  cascade="all" lazy="false" fetch="select">
-           <key column="DISTRIBUTOR_ID"  />
-            <one-to-many class="ua.mamamusic.accountancy.model.DistributorAlias" />
-        </set>
+	<set name="aliasSet" table="DISTRIBUTOR_ALIAS"  cascade="all" lazy="false" fetch="select">
+		<key column="DISTRIBUTOR_ID"  />
+		<one-to-many class="ua.mamamusic.accountancy.model.DistributorAlias" />
+	</set>
+    <property name="authorRights" column="AUTHOR_RIGHTS" type="integer"></property>
+	<property name="relatedRights" column="RELATED_RIGHTS" type="integer"></property>
 </class>
 </hibernate-mapping>

@@ -23,7 +23,7 @@ public class TracksListTableModel extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 1;
+		return 2;
 	}
 
 	@Override
@@ -37,6 +37,14 @@ public class TracksListTableModel extends AbstractTableModel {
 		switch (columnIndex) {
 		case 0:
 			return product.getName();
+		case 1:
+			StringBuilder sb = new StringBuilder();
+			if(product.getRightSet() != null){
+				for(TRight right : product.getRightSet()){
+					sb.append(right.getArtist().getName()).append(", ");
+				}
+			}
+			return sb.toString();
 		case -1:
 			return product;
 		}
@@ -47,7 +55,9 @@ public class TracksListTableModel extends AbstractTableModel {
 	public String getColumnName(int column) {
 		switch (column) {
 		case 0:
-			return "Name";
+			return "Track";
+		case 1:
+			return "Artist";
 		}
 		return "";
 	}
