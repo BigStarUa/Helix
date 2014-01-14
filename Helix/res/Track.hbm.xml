@@ -9,12 +9,17 @@
 	</id>
 	<property name="name" column="NAME" type="string"></property>
 	
-	<many-to-one name="artist" class="ua.mamamusic.accountancy.model.Artist"
-	 column="ARTIST_ID" lazy="false" fetch="select" not-null="true"></many-to-one>
+<!-- 	<many-to-one name="artist" class="ua.mamamusic.accountancy.model.Artist" -->
+<!-- 	 column="ARTIST_ID" lazy="false" fetch="select" not-null="true"></many-to-one> -->
 	 
 	 <set name="aliasSet" table="TRACKS_ALIAS"  cascade="all" lazy="false" fetch="select">
            <key column="TRACK_ID"  />
            <one-to-many class="ua.mamamusic.accountancy.model.TrackAlias" />
+     </set>
+     
+     <set name="rightSet" table="TRACK_RIGHTS"  cascade="all" lazy="false" fetch="select">
+           <key column="TRACK_ID"  />
+           <one-to-many class="ua.mamamusic.accountancy.model.TRight" />
      </set>
 </class>
 </hibernate-mapping>

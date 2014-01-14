@@ -12,9 +12,17 @@
            <key column="ARTIST_ID"  />
            <one-to-many class="ua.mamamusic.accountancy.model.ArtistAlias" />
      </set>
-     <set name="trackSet" table="TRACKS" order-by="name" cascade="all" lazy="false" fetch="select">
-           <key column="ARTIST_ID"  />
-           <one-to-many class="ua.mamamusic.accountancy.model.Track" />
-     </set>
+
+	<set name="trackSet" table="TRACK_RIGHTS" 
+        	inverse="true" lazy="false" fetch="select" cascade="delete" >
+            <key>
+                <column name="ARTIST_ID" not-null="true" />
+            </key>
+            <many-to-many entity-name="ua.mamamusic.accountancy.model.Track">
+                <column name="TRACK_ID" not-null="true" />
+            </many-to-many>
+        </set>
+
+
 </class>
 </hibernate-mapping>

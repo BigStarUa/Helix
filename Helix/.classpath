@@ -5,11 +5,12 @@
 	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="lib" path="sqlite-jdbc-3.7.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Hibernate427"/>
-	<classpathentry kind="lib" path="D:/APIs/jexcelapi/jxl.jar"/>
-	<classpathentry kind="lib" path="D:/APIs/JDatePicker-1.3.2-dist/jdatepicker-1.3.2.jar">
+	<classpathentry kind="lib" path="C:/APIs/jexcelapi/jxl.jar"/>
+	<classpathentry kind="lib" path="C:/APIs/JDatePicker-1.3.2-dist/jdatepicker-1.3.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/D:/APIs/JDatePicker-1.3.2-dist/javadoc/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Hibernate428"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

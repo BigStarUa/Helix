@@ -40,6 +40,7 @@ import ua.mamamusic.accountancy.ArtistsListListener;
 import ua.mamamusic.accountancy.DistributerAliasListListener;
 import ua.mamamusic.accountancy.DistributorsListListener;
 import ua.mamamusic.accountancy.IconFactory;
+import ua.mamamusic.accountancy.TRightFormListener;
 import ua.mamamusic.accountancy.TracksAliasListListener;
 import ua.mamamusic.accountancy.TracksListListener;
 import ua.mamamusic.accountancy.model.Artist;
@@ -47,6 +48,8 @@ import ua.mamamusic.accountancy.model.ArtistAlias;
 import ua.mamamusic.accountancy.model.Distributor;
 import ua.mamamusic.accountancy.model.DistributorAlias;
 import ua.mamamusic.accountancy.model.GenericListModel;
+import ua.mamamusic.accountancy.model.TRight;
+import ua.mamamusic.accountancy.model.TRightListTableModel;
 import ua.mamamusic.accountancy.model.Track;
 import ua.mamamusic.accountancy.model.TrackAlias;
 
@@ -59,7 +62,7 @@ import java.awt.Rectangle;
 import javax.swing.JList;
 import javax.swing.JToolBar;
 
-public class TrackForm extends AbstractJDialog implements TracksAliasListListener{
+public class TrackForm extends AbstractJDialog implements TracksAliasListListener, TRightFormListener{
 
 	/**
 	 * 
@@ -70,8 +73,10 @@ public class TrackForm extends AbstractJDialog implements TracksAliasListListene
 	private JTextField txtName;
 	private JLabel lblProductname;
 	private JList<TrackAlias> aliasList;
+	private JTable rightsTable;
 	private GenericListModel<TrackAlias> model;
 	private TracksListListener listener;
+	private TRightListTableModel rModel;
 
 	public TrackForm(Window owner, String title, Track track, TracksListListener listener) {
 		super(owner, title, Dialog.ModalityType.DOCUMENT_MODAL);
@@ -96,7 +101,17 @@ public class TrackForm extends AbstractJDialog implements TracksAliasListListene
 			}
 			
 			model = new GenericListModel<>(list);
-			aliasList.setModel(model);;
+			aliasList.setModel(model);
+			
+			List<TRight> rList;
+			if(track.getRightSet() != null){
+				rList = new ArrayList<>(track.getRightSet());
+			}else{
+				rList = new ArrayList<>();
+			}
+			
+			rModel = new TRightListTableModel(rList);
+			rightsTable.setModel(rModel);
 			
 		}else{
 			lblProductname.setText("New track");
@@ -210,6 +225,73 @@ public class TrackForm extends AbstractJDialog implements TracksAliasListListene
 					panelAlias.add(new JScrollPane(aliasList));
 					
 				}
+				{
+					JPanel panelRights = new JPanel();
+					tabbedPane.addTab("Rights", null, panelRights, null);
+					panelRights.setLayout(new BorderLayout(0, 0));
+					
+					JToolBar toolBar = new JToolBar();
+					panelRights.add(toolBar, BorderLayout.NORTH);
+					
+					JButton btnAdd = new JButton(IconFactory.ADD24_ICON);
+					btnAdd.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							
+							if(rModel.getCountAuthorRights() <= 0 && rModel.getCountRelatedRights() <= 0){
+								System.out.println("Can't add new right");
+								return;
+							}
+							
+							TRightForm dialog = new TRightForm(TrackForm.this.getOwner(), "", new TRight(), TrackForm.this, rModel.getCountAuthorRights(), rModel.getCountRelatedRights());
+							dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+							dialog.setVisible(true);
+						}
+					});
+					
+					toolBar.add(btnAdd);
+					
+					JButton btnEdit = new JButton(IconFactory.EDIT24_ICON);
+					btnEdit.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							int row = rightsTable.getSelectedRow();
+							if(row >= 0){
+								TRight right = (TRight) rModel.getValueAt(row, -1);
+								int author = rModel.getCountAuthorRights() + right.getAuthor();
+								int related = rModel.getCountRelatedRights() + right.getRelated();
+								TRightForm dialog = new TRightForm(TrackForm.this.getOwner(), "", right, TrackForm.this, author, related);
+								dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+								dialog.setVisible(true);
+							}
+						}
+					});
+					toolBar.add(btnEdit);
+					
+					JButton btnRemove = new JButton(IconFactory.DELETE24_ICON);
+					btnRemove.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							int row = rightsTable.getSelectedRow();
+							if(row >= 0){
+								int selection = JOptionPane.showOptionDialog(null,
+							            "Are you sure want to delete?",
+							            "Delete!", JOptionPane.YES_NO_OPTION,
+							            JOptionPane.INFORMATION_MESSAGE, null, null, null);
+
+								if(selection == JOptionPane.YES_OPTION)
+								{
+									rModel.removeRight(row);
+								}
+							}
+						}
+					});
+					toolBar.add(btnRemove);
+					
+					rightsTable = new JTable();
+					panelRights.add(new JScrollPane(rightsTable));
+					
+				}
 			}
 		}
 		{
@@ -267,6 +349,10 @@ public class TrackForm extends AbstractJDialog implements TracksAliasListListene
 			Set<TrackAlias> set = new HashSet<TrackAlias>();
 			set.addAll(model.getList());
 			track.setAliasSet(set);
+			
+			Set<TRight> rightSet = new HashSet<TRight>();
+			rightSet.addAll(rModel.getList());
+			track.setRightSet(rightSet);
 		}catch(Exception e){
 			
 		}
@@ -279,6 +365,14 @@ public class TrackForm extends AbstractJDialog implements TracksAliasListListene
 			model.addElement(alias);
 		}else{
 			model.repaintObjectInList(alias);
+		}
+	}
+
+	@Override
+	public void saveRight(TRight right) {
+		if(right != null){
+			right.setTrack(track);
+			rModel.addOrUpdateRight(right);
 		}
 	}
 }

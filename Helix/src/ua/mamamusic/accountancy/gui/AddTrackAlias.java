@@ -230,21 +230,21 @@ public class AddTrackAlias extends JDialog implements TracksListListener{
 	
 	@Override
 	public void saveTrack(Track track) {
-		if(track != null && track.getId() < 1){
-			track.setArtist(artist);
-			
-			if(artist.getTrackSet() != null){
-				artist.getTrackSet().add(track);
-			}else{
-				Set<Track> set = new HashSet<Track>();
-				set.add(track);
-				artist.setTrackSet(set);
-			}
-			
-			ArtistManager am = new ArtistManagerImpl();
-			am.updateArtist(artist);
-			
-			((GenericListModelFilter<Track>) list.getModel()).addElement(track);
-		}
+//		if(track != null && track.getId() < 1){
+//			track.setArtist(artist);
+//			
+//			if(artist.getTrackSet() != null){
+//				artist.getTrackSet().add(track);
+//			}else{
+//				Set<Track> set = new HashSet<Track>();
+//				set.add(track);
+//				artist.setTrackSet(set);
+//			}
+//			
+//			ArtistManager am = new ArtistManagerImpl();
+//			am.updateArtist(artist);
+//			
+//			((GenericListModelFilter<Track>) list.getModel()).addElement(track);
+//		}
 	}
 }

@@ -77,12 +77,13 @@ public class ArtistForm extends AbstractJDialog implements ArtistAliasListListen
 	private GenericListModel<ArtistAlias> model;
 	private GenericListModel<Track> trackListModel;
 	private ArtistsListListener listener;
-	private JList<Track> trackList;
+	//private JList<Track> trackList;
 	private JButton btnRemove;
 	private JButton btnRemoveTrack;
 	private JButton btnEditTrack;
 	private JToolBar toolBarTrack;
 	private JToolBar toolBarAlias;
+	private JList<Track> trackList;
 
 	public ArtistForm(Window owner, String title, ModalityType modalityType, Artist artist, ArtistsListListener listener) {
 		super(owner, title, modalityType);
@@ -277,12 +278,12 @@ public class ArtistForm extends AbstractJDialog implements ArtistAliasListListen
 					btnEditTrack.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
-							if(trackList.getSelectedValue() != null){
-								Track track = trackList.getSelectedValue();
-								TrackForm dialog = new TrackForm(ArtistForm.this.getOwner(), "", track, ArtistForm.this);
-								dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-								dialog.setVisible(true);
-							}
+//							if(trackList.getSelectedValue() != null){
+//								Track track = trackList.getSelectedValue();
+//								TrackForm dialog = new TrackForm(ArtistForm.this.getOwner(), "", track, ArtistForm.this);
+//								dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//								dialog.setVisible(true);
+//							}
 						}
 					});
 					toolBarTrack.add(btnEditTrack);
@@ -293,21 +294,21 @@ public class ArtistForm extends AbstractJDialog implements ArtistAliasListListen
 					btnRemoveTrack.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
-							int index = trackList.getSelectedIndex();
-							if(index >= 0){
-								int selection = JOptionPane.showOptionDialog(null,
-							            "Are you sure want to delete?",
-							            "Delete!", JOptionPane.YES_NO_OPTION,
-							            JOptionPane.INFORMATION_MESSAGE, null, null, null);
-
-								if(selection == JOptionPane.YES_OPTION)
-								{
-									trackListModel.removeElement(index);
-									btnRemoveTrack.setEnabled(false);
-									btnEditTrack.setEnabled(false);
-								}
-								
-							}
+//							int index = trackList.getSelectedIndex();
+//							if(index >= 0){
+//								int selection = JOptionPane.showOptionDialog(null,
+//							            "Are you sure want to delete?",
+//							            "Delete!", JOptionPane.YES_NO_OPTION,
+//							            JOptionPane.INFORMATION_MESSAGE, null, null, null);
+//
+//								if(selection == JOptionPane.YES_OPTION)
+//								{
+//									trackListModel.removeElement(index);
+//									btnRemoveTrack.setEnabled(false);
+//									btnEditTrack.setEnabled(false);
+//								}
+//								
+//							}
 						}
 					});
 					toolBarTrack.add(btnRemoveTrack);
@@ -397,11 +398,11 @@ public class ArtistForm extends AbstractJDialog implements ArtistAliasListListen
 
 	@Override
 	public void saveTrack(Track track) {
-		if(track != null && track.getId() < 1){
-			track.setArtist(artist);
-			trackListModel.addElement(track);
-		}else{
-			trackListModel.repaintObjectInList(track);
-		}
+//		if(track != null && track.getId() < 1){
+//			track.setArtist(artist);
+//			trackListModel.addElement(track);
+//		}else{
+//			trackListModel.repaintObjectInList(track);
+//		}
 	}
 }

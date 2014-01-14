@@ -49,13 +49,21 @@ import ua.mamamusic.accountancy.session.TrackManagerImpl;
 import java.awt.Font;
 import java.awt.Color;
 
-public class TracksList extends AbstractJPanel implements TracksListListener{
+import javax.swing.JPanel;
+
+import java.awt.FlowLayout;
+
+import javax.swing.JLabel;
+
+import java.awt.Component;
+
+public class TrackList extends AbstractJPanel implements TracksListListener{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static TracksList artistList;
+	private static TrackList artistList;
 	private JTable table;
 	private Window window;
 	private TableRowSorter<TableModel> sorter;
@@ -64,13 +72,13 @@ public class TracksList extends AbstractJPanel implements TracksListListener{
 	private JButton editButton;
 	private JButton delButton;
 	private TracksListTableModel model;
-	private TrackManagerImpl tm;
-	private JTable tableArtist;
+	private TrackManager tm;
+	private JPanel panel;
+	private JLabel lblFilter;
 
-	private TracksList(){
+	private TrackList(){
 		setLayout(new BorderLayout());
-		filterText = new JTextField();
-		window = SwingUtilities.getWindowAncestor(TracksList.this);
+		window = SwingUtilities.getWindowAncestor(TrackList.this);
 		
 		// Getting list of product from database
 		tm = new TrackManagerImpl();
@@ -83,6 +91,7 @@ public class TracksList extends AbstractJPanel implements TracksListListener{
 		
 		//Creating table
 		table = new JTable(model);
+		table.setShowGrid(false);
 		table.setGridColor(Color.LIGHT_GRAY);
 		table.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -99,7 +108,7 @@ public class TracksList extends AbstractJPanel implements TracksListListener{
 						RowSorter<? extends TableModel> rowSorter = table.getRowSorter();
 				        row = rowSorter.convertRowIndexToModel(row);
 				        Track track = (Track) table.getModel().getValueAt(row, -1);
-				        JDialog pf = new TrackForm(window, "Track form", track, TracksList.this);
+				        JDialog pf = new TrackForm(window, "Track form", track, TrackList.this);
 						pf.setVisible(true);
 					}
 				}
@@ -126,9 +135,6 @@ public class TracksList extends AbstractJPanel implements TracksListListener{
 	    
 	    toolBar = getToolBar();
 	    add(toolBar, BorderLayout.NORTH);
-	    
-	    tableArtist = new JTable();
-	    add(tableArtist, BorderLayout.WEST);
 	    table.setRowSorter(sorter);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -136,9 +142,9 @@ public class TracksList extends AbstractJPanel implements TracksListListener{
 		
 	}
 	
-	public static synchronized TracksList getInstance(){
+	public static synchronized TrackList getInstance(){
 		if(artistList == null){
-			artistList = new TracksList();
+			artistList = new TrackList();
 		}
 		return artistList;
 	}
@@ -148,12 +154,12 @@ public class TracksList extends AbstractJPanel implements TracksListListener{
 		
 		JButton addButton = new JButton();
 		addButton.setIcon(IconFactory.ADD32_ICON);
-		addButton.setToolTipText("Add Distributor");
+		addButton.setToolTipText("Add artist");
 		addButton.setFocusable(false);
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Track track = new Track();
-				JDialog pf = new TrackForm(window, "Track form", track, TracksList.this);
+				JDialog pf = new TrackForm(window, "Track form", track, TrackList.this);
 				pf.setVisible(true);
 			}
 		});
@@ -161,7 +167,7 @@ public class TracksList extends AbstractJPanel implements TracksListListener{
 		
 		editButton = new JButton();
 		editButton.setIcon(IconFactory.EDIT32_ICON);
-		editButton.setToolTipText("Edit Distributor");
+		editButton.setToolTipText("Edit artist");
 		editButton.setFocusable(false);
 		editButton.setEnabled(false);
 		editButton.addActionListener(new ActionListener() {
@@ -171,19 +177,16 @@ public class TracksList extends AbstractJPanel implements TracksListListener{
 		        row = rowSorter.convertRowIndexToModel(row);
 				if(row > -1){
 					Track track = (Track) table.getModel().getValueAt(row, -1);
-					JDialog pf = new TrackForm(window, "Track form", track, TracksList.this);
+					JDialog pf = new TrackForm(window, "Track form", track, TrackList.this);
 					pf.setVisible(true);
 				}
 			}
 		});
-		if(table.getSelectedRow() > -1){
-			//editButton.setEnabled(true);
-	    }
 		toolBar.add(editButton);
 		
 		delButton = new JButton();
 		delButton.setIcon(IconFactory.DELETE32_ICON);
-		delButton.setToolTipText("Delete Distributor");
+		delButton.setToolTipText("Track artist");
 		delButton.setFocusable(false);
 		delButton.setEnabled(false);
 		delButton.addActionListener(new ActionListener() {
@@ -194,7 +197,7 @@ public class TracksList extends AbstractJPanel implements TracksListListener{
 				if(row > -1){
 					int selection = JOptionPane.showOptionDialog(null,
 				            "Are you sure want to delete?",
-				            "Congratulations!", JOptionPane.YES_NO_OPTION,
+				            "Delete!", JOptionPane.YES_NO_OPTION,
 				            JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
 					if(selection == JOptionPane.YES_OPTION)
@@ -204,10 +207,19 @@ public class TracksList extends AbstractJPanel implements TracksListListener{
 				}
 			}
 		});
-		if(table.getSelectedRow() > -1){
-			//editButton.setEnabled(true);
-	    }
 		toolBar.add(delButton);
+		
+		panel = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+		flowLayout.setVgap(8);
+		flowLayout.setAlignment(FlowLayout.TRAILING);
+		toolBar.add(panel);
+		
+		lblFilter = new JLabel("Filter:");
+		panel.add(lblFilter);
+		filterText = new JTextField();
+		filterText.setColumns(20);
+		panel.add(filterText);
 		
 		
 		
@@ -223,27 +235,21 @@ public class TracksList extends AbstractJPanel implements TracksListListener{
 		        }
 		        if(table.getSelectedRow() == -1){
 		        	editButton.setEnabled(false);
-		        	TracksList.this.toolBar.repaint();
-		        	TracksList.this.toolBar.revalidate();
+		        	TrackList.this.toolBar.repaint();
+		        	TrackList.this.toolBar.revalidate();
 		        }
-		        //getListener().fireUpdate();
-		        //filterText.requestFocusInWindow();
 			}
 		});
-		toolBar.add(filterText);
 		return toolBar;
 	}
 
 	@Override
 	public void saveTrack(Track track) {
-		TrackManager tm = new TrackManagerImpl();
-		if(track.getId() > 0){
-			tm.updateTrack(track);
-			System.out.println("Product updated");
-		}else{
+		if(track != null && track.getId() < 1){
 			tm.saveNewTrack(track);
 			model.addTrack(track);
-			System.out.println("Product saved");
+		}else{
+			tm.updateTrack(track);
 		}
 	}
 	

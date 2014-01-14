@@ -58,6 +58,7 @@ import ua.mamamusic.accountancy.model.Artist;
 import ua.mamamusic.accountancy.model.ArtistAlias;
 import ua.mamamusic.accountancy.model.DataRow;
 import ua.mamamusic.accountancy.model.Distributor;
+import ua.mamamusic.accountancy.model.TRight;
 import ua.mamamusic.accountancy.model.Track;
 import ua.mamamusic.accountancy.model.TrackAlias;
 import ua.mamamusic.accountancy.model.TrackType;
@@ -71,6 +72,8 @@ import ua.mamamusic.accountancy.session.DataRowManager;
 import ua.mamamusic.accountancy.session.DataRowManagerImpl;
 import ua.mamamusic.accountancy.session.DistributorManager;
 import ua.mamamusic.accountancy.session.DistributorManagerImpl;
+import ua.mamamusic.accountancy.session.TrackManager;
+import ua.mamamusic.accountancy.session.TrackManagerImpl;
 import ua.mamamusic.accountancy.session.TrackTypeManager;
 import ua.mamamusic.accountancy.session.TrackTypeManagerImpl;
 
@@ -127,6 +130,7 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 	private JDatePicker datePanel;
 	private JPanel panel_8;
 	private JToolBar toolBar_1;
+	private List<Track> trackList;
 	private enum MonthDay {FIRST, LAST}
 
 	public UploadForm(){
@@ -141,6 +145,9 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 		
 		TrackTypeManager ttm = new TrackTypeManagerImpl();
 		typeList = ttm.loadAllTrackTypesOrderedBy("name");
+		
+		TrackManager tm = new TrackManagerImpl();
+		trackList = tm.loadAllTracksOrderedBy("name");
 		
 		FileFilter ff = new FileNameExtensionFilter("Excel Files", "xls");
 		//Create file chooser
@@ -346,7 +353,13 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 		                ReadExcel rx = new ReadExcel(file, table, lblLoadingicon_1, sorter, dist,
 		                		artistList, typeList, UploadForm.this);
 		                rx.setInputFile(file.getAbsolutePath());
-						rx.execute(); 
+						//rx.execute(); 
+		                try {
+							rx.start();
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}else{
 						JOptionPane.showMessageDialog(UploadForm.this,
 							    "Select distributor first",
@@ -468,17 +481,51 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 		return null;
 	}
 	
+	private Artist lookForArtist(Artist artist, String alias){
+		for(ArtistAlias artAlias : artist.getAliasSet()){
+			if(artAlias.getName().equalsIgnoreCase(alias.trim())){
+				return artist;
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public void fireTableChanged() {
 		UploadListTableModel model = (UploadListTableModel)table.getModel();
 		
 		for(int i=0; i < model.getRowCount(); i++){
-			DataRow prod = (DataRow) model.getValueAt(i, -1);
-			prod.setArtist(matchArtist(prod.getColumnArtist()));
-			if(prod.getArtist() != null){
-				prod.setTrack(matchTrack(prod.getArtist(), prod.getColumnTrack()));
+			DataRow row = (DataRow) model.getValueAt(i, -1);
+			
+			first:
+			for(Track track : trackList){
+				if(track.getAliasSet() == null) continue;
+				for(TrackAlias alias : track.getAliasSet()){
+					if(alias.getName().equalsIgnoreCase(row.getColumnTrack().trim())){
+						if(track.getRightSet() == null) continue;
+						for(TRight right : track.getRightSet()){
+							Artist artist = lookForArtist(right.getArtist(), row.getColumnArtist());
+							if(artist != null){
+								row.setArtist(artist);
+								row.setTrack(track);
+								break first;
+							}else{
+								continue first;
+							}
+						}
+						
+
+					}
+				}
 			}
-			prod.setType(matchType(prod.getColumnTrackType()));
+			if(row.getArtist() == null){
+				row.setArtist(matchArtist(row.getColumnArtist()));
+			}
+//			row.setArtist(matchArtist(row.getColumnArtist()));
+//			if(row.getArtist() != null){
+//				row.setTrack(matchTrack(row.getArtist(), row.getColumnTrack()));
+//			}
+			row.setType(matchType(row.getColumnTrackType()));
 		}
 		table.repaint();
 		table.revalidate();

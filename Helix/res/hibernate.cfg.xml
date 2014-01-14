@@ -20,5 +20,6 @@
 		<mapping resource="TrackType.hbm.xml"/>
 		<mapping resource="TrackTypeAlias.hbm.xml"/>
 		<mapping resource="DataRow.hbm.xml"/>
+		<mapping resource="TRight.hbm.xml"/>
 	</session-factory>
 </hibernate-configuration>

@@ -155,15 +155,15 @@ public class ReadExcel extends SwingWorker<List, Object> {
 			Number number;
 			
 			for(int i=0; i < list.size(); i++){
-				DataRow prod = list.get(i);
-				prod.setDistributor(dist);
+				DataRow row = list.get(i);
+				row.setDistributor(dist);
 
 			    try {
-			    	number = defForm.parse(prod.getColumnQuantity());
-			        prod.setQuantity(number.intValue());
+			    	number = defForm.parse(row.getColumnQuantity());
+			    	row.setQuantity(number.intValue());
 			        
-			        number = defForm.parse(prod.getColumnPrice());
-			        prod.setIncome(number.doubleValue());
+			        number = defForm.parse(row.getColumnPrice());
+			        row.setIncome(number.doubleValue());
 			        
 			        
 			      } catch (ParseException pe) {

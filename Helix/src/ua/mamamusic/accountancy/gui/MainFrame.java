@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.AbstractButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -29,6 +30,7 @@ import ua.mamamusic.accountancy.ReadExcel;
 import ua.mamamusic.accountancy.action.ArtistsListOpenAction;
 import ua.mamamusic.accountancy.action.DistributorsListOpenAction;
 import ua.mamamusic.accountancy.action.ReportFormOpenAction;
+import ua.mamamusic.accountancy.action.TrackListOpenAction;
 import ua.mamamusic.accountancy.action.TrackTypeListOpenAction;
 import ua.mamamusic.accountancy.action.UploadFormOpenAction;
 import ua.mamamusic.accountancy.model.Distributor;
@@ -70,6 +72,9 @@ public class MainFrame extends JFrame implements ChangeListener {
 	private JButton btnUpload;
 	private JButton btnReports;
 	private ReportFormOpenAction openReportFormAction;
+	private JButton btnTrack;
+	private AbstractButton mntmTrack;
+	private TrackListOpenAction openTrackAction;
 
 	/**
 	 * Create the frame.
@@ -107,6 +112,11 @@ public class MainFrame extends JFrame implements ChangeListener {
 		mntmArtists = new JMenuItem(openArtistAction);
 		mntmArtists.setText("Artists List");
 		mnCatalog.add(mntmArtists);
+		
+		openTrackAction = new TrackListOpenAction(tabbedPane, "Track List");
+		mntmTrack = new JMenuItem(openTrackAction);
+		mntmTrack.setText("Track List");
+		mnCatalog.add(mntmTrack);
 		
 		openTrackTypeAction = new TrackTypeListOpenAction(tabbedPane, "TrackType List");
 		mntmTrackType = new JMenuItem(openTrackTypeAction);
@@ -148,6 +158,12 @@ public class MainFrame extends JFrame implements ChangeListener {
 		btnArtist.setIcon(IconFactory.ARTIST32_ICON);
 		btnArtist.setFocusable(false);
 		toolBar.add(btnArtist);
+		
+		btnTrack = new JButton();
+		btnTrack.setAction(openTrackAction);
+		btnTrack.setIcon(IconFactory.HEADPHONES32_ICON);
+		btnTrack.setFocusable(false);
+		toolBar.add(btnTrack);
 		
 		btnTracktype = new JButton();
 		btnTracktype.setAction(openTrackTypeAction);
