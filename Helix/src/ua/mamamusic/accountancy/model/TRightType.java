@@ -1,6 +1,6 @@
 package ua.mamamusic.accountancy.model;
 
-public enum RightType {
+public enum TRightType {
 	AUTHOR,
 	RELATED
 }

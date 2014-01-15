@@ -47,6 +47,8 @@ import ua.mamamusic.accountancy.session.DistributorManagerImpl;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.SystemColor;
 import java.awt.Rectangle;
 
@@ -57,6 +59,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.BoxLayout;
 import javax.swing.Box;
 import javax.swing.UIManager;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class DistributorForm extends AbstractJDialog implements DistributerAliasListListener{
 
@@ -80,6 +84,10 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 	private JTextField txtColumnquantity;
 	private JTextField txtAuthor;
 	private JTextField txtRelated;
+	private JTextField txtRelatedColumn;
+	private JLabel lblTotal;
+	private JLabel lblRelatedColumn;
+	private JComboBox<String> comboBoxIncome;
 
 	public DistributorForm(Window owner, String title, ModalityType modalityType, Distributor distributor, DistributorsListListener listener) {
 		super(owner, title, modalityType);
@@ -105,12 +113,27 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 			txtAuthor.setText(String.valueOf(distributor.getAuthorRights()));
 			txtRelated.setText(String.valueOf(distributor.getRelatedRights()));
 			
+			txtRelatedColumn.setText(String.valueOf(distributor.getColumnRelatedIncome()));
+			comboBoxIncome.setSelectedIndex(distributor.getColumnIncomeType());
+			repaintIncomeGroup();
 			
 			model = new GenericListModel<>(new ArrayList<>(distributor.getAliasSet()));
 			aliasList.setModel(model);;
 			
 		}else{
 			lblProductname.setText("New Distributor");
+		}
+	}
+	
+	private void repaintIncomeGroup(){
+		if(comboBoxIncome.getSelectedIndex() == 0){
+			lblRelatedColumn.setVisible(false);
+			txtRelatedColumn.setVisible(false);
+			lblTotal.setText("Total:   ");
+		}else{
+			lblRelatedColumn.setVisible(true);
+			txtRelatedColumn.setVisible(true);
+			lblTotal.setText("Author:  ");
 		}
 	}
 	
@@ -224,11 +247,6 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 					lblIdColumn.setBounds(10, 42, 120, 20);
 					panelCharacteristic.add(lblIdColumn);
 					
-					JLabel lblPriceColumn = new JLabel("Price Column");
-					lblPriceColumn.setFont(new Font("Tahoma", Font.PLAIN, 14));
-					lblPriceColumn.setBounds(10, 73, 120, 20);
-					panelCharacteristic.add(lblPriceColumn);
-					
 					txtColumnCount = new JTextField();
 					txtColumnCount.setBounds(140, 13, 86, 20);
 					panelCharacteristic.add(txtColumnCount);
@@ -239,39 +257,34 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 					txtColumnId.setBounds(140, 44, 86, 20);
 					panelCharacteristic.add(txtColumnId);
 					
-					txtColumnPrice = new JTextField();
-					txtColumnPrice.setColumns(10);
-					txtColumnPrice.setBounds(140, 75, 86, 20);
-					panelCharacteristic.add(txtColumnPrice);
-					
 					JLabel lblArtistColumn = new JLabel("Artist Column");
 					lblArtistColumn.setFont(new Font("Tahoma", Font.PLAIN, 14));
-					lblArtistColumn.setBounds(10, 104, 120, 20);
+					lblArtistColumn.setBounds(10, 73, 120, 20);
 					panelCharacteristic.add(lblArtistColumn);
 					
 					txtArtist = new JTextField();
 					txtArtist.setColumns(10);
-					txtArtist.setBounds(140, 106, 86, 20);
+					txtArtist.setBounds(140, 75, 86, 20);
 					panelCharacteristic.add(txtArtist);
 					
 					JLabel lblTrackColumn = new JLabel("Track Column");
 					lblTrackColumn.setFont(new Font("Tahoma", Font.PLAIN, 14));
-					lblTrackColumn.setBounds(10, 137, 120, 20);
+					lblTrackColumn.setBounds(10, 106, 120, 20);
 					panelCharacteristic.add(lblTrackColumn);
 					
 					txtTrack = new JTextField();
 					txtTrack.setColumns(10);
-					txtTrack.setBounds(140, 139, 86, 20);
+					txtTrack.setBounds(140, 108, 86, 20);
 					panelCharacteristic.add(txtTrack);
 					
-					JLabel lblTrackType = new JLabel("Track type");
+					JLabel lblTrackType = new JLabel("Track type Column");
 					lblTrackType.setFont(new Font("Tahoma", Font.PLAIN, 14));
-					lblTrackType.setBounds(10, 168, 120, 20);
+					lblTrackType.setBounds(10, 137, 120, 20);
 					panelCharacteristic.add(lblTrackType);
 					
 					txtType = new JTextField();
 					txtType.setColumns(10);
-					txtType.setBounds(140, 170, 86, 20);
+					txtType.setBounds(140, 139, 86, 20);
 					panelCharacteristic.add(txtType);
 					
 					txtColumnquantity = new JTextField();
@@ -283,6 +296,58 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 					lblColumnQuantity.setFont(new Font("Tahoma", Font.PLAIN, 14));
 					lblColumnQuantity.setBounds(266, 11, 120, 20);
 					panelCharacteristic.add(lblColumnQuantity);
+					
+					JPanel panel = new JPanel();
+					panel.setBorder(new TitledBorder(null, "Income Columns", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+					panel.setBounds(266, 52, 216, 105);
+					panelCharacteristic.add(panel);
+					panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+					
+					Box horizontalBox = Box.createHorizontalBox();
+					panel.add(horizontalBox);
+					
+					comboBoxIncome = new JComboBox<String>();
+					comboBoxIncome.setFont(new Font("Tahoma", Font.PLAIN, 14));
+					horizontalBox.add(comboBoxIncome);
+					comboBoxIncome.setModel(new DefaultComboBoxModel<String>(new String[] {"Total (Combined)", "Separated"}));
+					comboBoxIncome.addItemListener(new ItemListener() {
+					     @Override
+					     public void itemStateChanged(ItemEvent e) {
+					    	 if (e.getStateChange() == ItemEvent.SELECTED) {
+					             repaintIncomeGroup();
+					          }
+					     }
+					 });
+					
+					Component rigidArea = Box.createRigidArea(new Dimension(20, 5));
+					panel.add(rigidArea);
+					
+					Box horizontalBox_1 = Box.createHorizontalBox();
+					panel.add(horizontalBox_1);
+					
+					lblTotal = new JLabel("Total:    ");
+					lblTotal.setFont(new Font("Tahoma", Font.PLAIN, 14));
+					horizontalBox_1.add(lblTotal);
+					
+					txtColumnPrice = new JTextField();
+					txtColumnPrice.setFont(new Font("Tahoma", Font.PLAIN, 14));
+					horizontalBox_1.add(txtColumnPrice);
+					txtColumnPrice.setColumns(10);
+					
+					Component rigidArea_1 = Box.createRigidArea(new Dimension(20, 5));
+					panel.add(rigidArea_1);
+					
+					Box horizontalBox_2 = Box.createHorizontalBox();
+					panel.add(horizontalBox_2);
+					
+					lblRelatedColumn = new JLabel("Related:");
+					lblRelatedColumn.setFont(new Font("Tahoma", Font.PLAIN, 14));
+					horizontalBox_2.add(lblRelatedColumn);
+					
+					txtRelatedColumn = new JTextField();
+					txtRelatedColumn.setFont(new Font("Tahoma", Font.PLAIN, 14));
+					horizontalBox_2.add(txtRelatedColumn);
+					txtRelatedColumn.setColumns(10);
 					
 				}
 				{
@@ -404,6 +469,11 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 			distributor.setColumnQuantity(Integer.valueOf(txtColumnquantity.getText()));
 			distributor.setAuthorRights(Integer.valueOf(txtAuthor.getText()));
 			distributor.setRelatedRights(Integer.valueOf(txtRelated.getText()));
+			distributor.setColumnIncomeType(comboBoxIncome.getSelectedIndex());
+			
+			if(comboBoxIncome.getSelectedIndex() == 1){
+				distributor.setColumnRelatedIncome(Integer.parseInt(txtRelatedColumn.getText()));
+			}
 			
 			Set<DistributorAlias> set = new HashSet<DistributorAlias>();
 			set.addAll(model.getList());

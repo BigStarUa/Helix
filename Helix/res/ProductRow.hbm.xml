@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-<class name="ua.mamamusic.accountancy.model.DataRow" table="TRACK_INCOME_ENTITY">
+<class name="ua.mamamusic.accountancy.model.ProductRow" table="TRACK_INCOME_ENTITY">
 	<id name="id" column="ID" type="long">
 		<generator class="native">
 		</generator>
@@ -23,6 +23,12 @@
     <property name="quantity" column="QUANTITY" type="integer"></property>
     <property name="income" column="INCOME" type="double"></property>
     <property name="date" column="DATE" type="date"></property>
+    
+    <property name="rightType" column="RIGHTS_TYPE" not-null="true">
+	  <type name="org.hibernate.type.EnumType">
+	    <param name="enumClass">ua.mamamusic.accountancy.model.TRightType</param>
+	  </type>
+	</property>
      
 </class>
 </hibernate-mapping>

@@ -10,12 +10,14 @@ public class DataRow {
 	private TrackType type;
 	private int quantity;
 	private Double income;
+	private Double incomeRelated;
 	private Date date;
 	private Distributor distributor;
 	
 	private String columnArtist;
 	private String columnTrack;
 	private String columnPrice;
+	private String columnRelatedIncome;
 	private String columnQuantity;
 	private String columnTrackType;
 	
@@ -101,6 +103,18 @@ public class DataRow {
 	}
 	public void setDistributor(Distributor distributor) {
 		this.distributor = distributor;
+	}
+	public String getColumnRelatedIncome() {
+		return columnRelatedIncome;
+	}
+	public void setColumnRelatedIncome(String columnRelatedIncome) {
+		this.columnRelatedIncome = columnRelatedIncome;
+	}
+	public Double getIncomeRelated() {
+		return incomeRelated;
+	}
+	public void setIncomeRelated(Double incomeRelated) {
+		this.incomeRelated = incomeRelated;
 	}
 
 }

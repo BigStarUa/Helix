@@ -9,20 +9,21 @@ import org.hibernate.Query;
 import ua.mamamusic.accountancy.model.Artist;
 import ua.mamamusic.accountancy.model.DataRow;
 import ua.mamamusic.accountancy.model.Distributor;
+import ua.mamamusic.accountancy.model.ProductRow;
 import ua.mamamusic.accountancy.model.Track;
 import ua.mamamusic.accountancy.model.TrackType;
 
-public interface DataRowManager {
+public interface ProductRowManager {
 
-	public DataRow findDataRowById(long id);
+	public ProductRow findDataRowById(long id);
 	
-	public void saveNewDataRow(DataRow row);
+	public void saveNewDataRow(ProductRow row);
 	
-	public void saveNewDataRowList(List<DataRow> list);
+	public void saveNewDataRowList(List<ProductRow> list);
 	
-	public void deleteDataRow(DataRow row);
+	public void deleteDataRow(ProductRow row);
 
-	public List<DataRow> loadAllDataRowsByPeriod(Date start, Date end, Distributor distributor);
+	public List<ProductRow> loadAllDataRowsByPeriod(Date start, Date end, Distributor distributor);
 	
 	public List<Object[]> loadDataRowsByCriterias(Artist[] artList, Distributor distributor, TrackType type, Date start, Date end, boolean groupDistrib, boolean groupType);
 

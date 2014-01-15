@@ -21,5 +21,7 @@
 	</set>
     <property name="authorRights" column="AUTHOR_RIGHTS" type="integer"></property>
 	<property name="relatedRights" column="RELATED_RIGHTS" type="integer"></property>
+	<property name="columnIncomeType" column="COLUMN_INCOME_TYPE" type="integer"></property>
+	<property name="columnRelatedIncome" column="COLUMN_RELATED_INCOME" type="integer"></property>
 </class>
 </hibernate-mapping>

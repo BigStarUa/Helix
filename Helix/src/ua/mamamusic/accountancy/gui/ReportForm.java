@@ -18,8 +18,8 @@ import ua.mamamusic.accountancy.model.ReportTableModel;
 import ua.mamamusic.accountancy.model.TrackType;
 import ua.mamamusic.accountancy.session.ArtistManager;
 import ua.mamamusic.accountancy.session.ArtistManagerImpl;
-import ua.mamamusic.accountancy.session.DataRowManager;
-import ua.mamamusic.accountancy.session.DataRowManagerImpl;
+import ua.mamamusic.accountancy.session.ProductRowManager;
+import ua.mamamusic.accountancy.session.ProductRowManagerImpl;
 import ua.mamamusic.accountancy.session.DistributorManager;
 import ua.mamamusic.accountancy.session.DistributorManagerImpl;
 import ua.mamamusic.accountancy.session.TrackTypeManager;
@@ -268,7 +268,7 @@ public class ReportForm extends AbstractJPanel {
 							type = (TrackType) typeComboBox.getSelectedItem();
 						}
 						
-						DataRowManager drm = new DataRowManagerImpl();
+						ProductRowManager drm = new ProductRowManagerImpl();
 						List<Object[]> dataRowList = drm.loadDataRowsByCriterias(array, distr, type, start, end, chckbxGroupDistrib.isSelected(), chckbxGroupType.isSelected());
 						
 						TableModel model = new ReportTableModel(dataRowList);

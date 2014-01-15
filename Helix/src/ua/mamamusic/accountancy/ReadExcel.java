@@ -23,7 +23,6 @@ import ua.mamamusic.accountancy.model.Artist;
 import ua.mamamusic.accountancy.model.ArtistAlias;
 import ua.mamamusic.accountancy.model.DataRow;
 import ua.mamamusic.accountancy.model.Distributor;
-import ua.mamamusic.accountancy.model.ProductEntity;
 import ua.mamamusic.accountancy.model.Track;
 import ua.mamamusic.accountancy.model.TrackAlias;
 import ua.mamamusic.accountancy.model.TrackType;
@@ -113,6 +112,8 @@ public class ReadExcel extends SwingWorker<List, Object> {
 		      int columnPrice = dist.getColumnPrice();
 		      int columnQuantity = dist.getColumnQuantity();
 		      int columnTrackType = dist.getColumnTrackType();
+		      int columnRelatedIncome = dist.getColumnRelatedIncome();
+		      int incomeType = dist.getColumnIncomeType();
 
 		      for (int j = 0; j < sheet.getRows(); j++) {
 		    	  //array = new String[columnCount];
@@ -135,6 +136,8 @@ public class ReadExcel extends SwingWorker<List, Object> {
 		        	  product.setColumnQuantity(cell.getContents());
 		          }else if(i == columnTrackType){
 		        	  product.setColumnTrackType(cell.getContents());
+		          }else if(i == columnRelatedIncome && incomeType == 1){
+		        	  product.setColumnRelatedIncome(cell.getContents());
 		          }
 		          
 		          //array[i] = cell.getContents();
@@ -157,20 +160,22 @@ public class ReadExcel extends SwingWorker<List, Object> {
 			for(int i=0; i < list.size(); i++){
 				DataRow row = list.get(i);
 				row.setDistributor(dist);
-
 			    try {
 			    	number = defForm.parse(row.getColumnQuantity());
 			    	row.setQuantity(number.intValue());
 			        
 			        number = defForm.parse(row.getColumnPrice());
-			        row.setIncome(number.doubleValue());
+			        row.setIncome(number.doubleValue()); 
 			        
-			        
+			        if(dist.getColumnIncomeType() == 1){
+				        number = defForm.parse(row.getColumnRelatedIncome());
+				        row.setIncomeRelated(number.doubleValue()); 
+			        }
 			      } catch (ParseException pe) {
 			        System.err.println("not parseable!");
 			      }
-				
 			}
+			
 			TableModel model = new UploadListTableModel(list); 
 			table.setModel(model);
 			sorter.setModel(model);

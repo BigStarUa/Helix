@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -58,7 +59,9 @@ import ua.mamamusic.accountancy.model.Artist;
 import ua.mamamusic.accountancy.model.ArtistAlias;
 import ua.mamamusic.accountancy.model.DataRow;
 import ua.mamamusic.accountancy.model.Distributor;
+import ua.mamamusic.accountancy.model.ProductRow;
 import ua.mamamusic.accountancy.model.TRight;
+import ua.mamamusic.accountancy.model.TRightType;
 import ua.mamamusic.accountancy.model.Track;
 import ua.mamamusic.accountancy.model.TrackAlias;
 import ua.mamamusic.accountancy.model.TrackType;
@@ -68,8 +71,8 @@ import ua.mamamusic.accountancy.model.UploadListTableCellRenderer;
 import ua.mamamusic.accountancy.model.UploadListTableModel;
 import ua.mamamusic.accountancy.session.ArtistManager;
 import ua.mamamusic.accountancy.session.ArtistManagerImpl;
-import ua.mamamusic.accountancy.session.DataRowManager;
-import ua.mamamusic.accountancy.session.DataRowManagerImpl;
+import ua.mamamusic.accountancy.session.ProductRowManager;
+import ua.mamamusic.accountancy.session.ProductRowManagerImpl;
 import ua.mamamusic.accountancy.session.DistributorManager;
 import ua.mamamusic.accountancy.session.DistributorManagerImpl;
 import ua.mamamusic.accountancy.session.TrackManager;
@@ -100,6 +103,9 @@ import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 
 import java.awt.GridLayout;
 
+import javax.swing.Box;
+import javax.swing.DefaultComboBoxModel;
+
 public class UploadForm extends AbstractJPanel implements UploadFormListener{
 	
 	private static final long serialVersionUID = 1L;
@@ -128,9 +134,11 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 	private JPanel panel_4;
 	private JPanel panel_5;
 	private JDatePicker datePanel;
-	private JPanel panel_8;
 	private JToolBar toolBar_1;
 	private List<Track> trackList;
+	private Box horizontalBox;
+	private Box horizontalBox_1;
+	private JComboBox comboBoxRightType;
 	private enum MonthDay {FIRST, LAST}
 
 	public UploadForm(){
@@ -220,34 +228,53 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 				return null;
 			}
 		};
-		panel_4.setLayout(new GridLayout(0, 1, 0, 0));
+		panel_4.setLayout(new BoxLayout(panel_4, BoxLayout.Y_AXIS));
 		
-		panel_8 = new JPanel();
-		panel_4.add(panel_8);
-		panel_8.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+		horizontalBox = Box.createHorizontalBox();
+		panel_4.add(horizontalBox);
 		
 		
 		
 		lblDate = new JLabel("Date:");
-		panel_8.add(lblDate);
+		horizontalBox.add(lblDate);
+		
+		
+				
 				JDatePanelImpl pan = new JDatePanelImpl(null);
 				datePanel = new JDatePickerImpl(pan, ab);
 				DateModel<Calendar> mod = (DateModel<Calendar>) datePanel.getModel();
 				mod.setValue(Calendar.getInstance());
-				panel_8.add((Component)datePanel);
+				horizontalBox.add((Component)datePanel);
 				
-				JPanel panel_9 = new JPanel();
-				panel_4.add(panel_9);
-				panel_9.setLayout(new FlowLayout(FlowLayout.LEADING, 5, 5));
+				Component rigidArea = Box.createRigidArea(new Dimension(20, 5));
+				panel_4.add(rigidArea);
+				
+				
+				horizontalBox_1 = Box.createHorizontalBox();
+				panel_4.add(horizontalBox_1);
 				
 				JLabel lblDistributor_1 = new JLabel("Distributor:");
-				panel_9.add(lblDistributor_1);
+				horizontalBox_1.add(lblDistributor_1);
 				
 				
 				comboBoxDistributors = new JComboBox(new MyComboBoxModel(list));
-				panel_9.add(comboBoxDistributors);
+				horizontalBox_1.add(comboBoxDistributors);
 				comboBoxDistributors.setPreferredSize(new Dimension(150, 25));
 				comboBoxDistributors.setMaximumSize(new Dimension(200, 32767));
+				
+				Component rigidArea_1 = Box.createRigidArea(new Dimension(20, 5));
+				panel_4.add(rigidArea_1);
+				
+				Box horizontalBox_2 = Box.createHorizontalBox();
+				panel_4.add(horizontalBox_2);
+				
+				comboBoxRightType = new JComboBox();
+				comboBoxRightType.setModel(new DefaultComboBoxModel(new String[] {"Total (Combined)", "Author right", "Related right"}));
+				comboBoxRightType.setFont(new Font("Tahoma", Font.PLAIN, 14));
+				horizontalBox_2.add(comboBoxRightType);
+				
+				Component rigidArea_2 = Box.createRigidArea(new Dimension(20, 5));
+				panel_4.add(rigidArea_2);
 		
 		
 		
@@ -303,16 +330,15 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 		btnExport.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				TableModel model = table.getModel();
-				int count = model.getRowCount();
-				List<DataRow> list = new LinkedList<DataRow>();
+				
+				List<ProductRow> prodList = buildProductRowList();
 				Date date = ((Calendar)datePanel.getModel().getValue()).getTime();
-				DataRowManager drm = new DataRowManagerImpl();
+				ProductRowManager drm = new ProductRowManagerImpl();
 				
 				Date start = getFirstDateOfCurrentMonth(date, MonthDay.FIRST);
 				Date end = getFirstDateOfCurrentMonth(date, MonthDay.LAST);
 				Distributor dist = (Distributor) comboBoxDistributors.getSelectedItem();
-				List<DataRow> existingList = drm.loadAllDataRowsByPeriod(start, end, dist);
+				List<ProductRow> existingList = drm.loadAllDataRowsByPeriod(start, end, dist);
 				
 				if(existingList != null && existingList.size() > 0){
 					JOptionPane.showMessageDialog(UploadForm.this,
@@ -322,16 +348,9 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 
 				}else{
 				
-					for(int i = 0; i < count; i++){
-						DataRow row = (DataRow)model.getValueAt(i, -1);
-						if(row.isValid()){
-							row.setDate(date);
-							list.add(row);
-						}
-					}
-					drm.saveNewDataRowList(list);
+					//drm.saveNewDataRowList(prodList);
 					JOptionPane.showMessageDialog(UploadForm.this,
-						    list.size() + " row of data inserted in database",
+							prodList.size() + " row of data inserted in database",
 						    "Done",
 						    JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -396,12 +415,6 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 	private JToolBar getToolBar() {
 		toolBar_1 = new JToolBar();
 		toolBar_1.setFloatable(false);
-		if(table.getSelectedRow() > -1){
-			//editButton.setEnabled(true);
-	    }
-		if(table.getSelectedRow() > -1){
-			//editButton.setEnabled(true);
-	    }
 		
 		panel_1 = new JPanel();
 		FlowLayout flowLayout_2 = (FlowLayout) panel_1.getLayout();
@@ -503,17 +516,16 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 				for(TrackAlias alias : track.getAliasSet()){
 					if(alias.getName().equalsIgnoreCase(row.getColumnTrack().trim())){
 						if(track.getRightSet() == null) continue;
-						for(TRight right : track.getRightSet()){
+						Iterator<TRight> iter = track.getRightSet().iterator();
+						while (iter.hasNext()) {
+							TRight right = iter.next();
 							Artist artist = lookForArtist(right.getArtist(), row.getColumnArtist());
 							if(artist != null){
 								row.setArtist(artist);
 								row.setTrack(track);
 								break first;
-							}else{
-								continue first;
 							}
 						}
-						
 
 					}
 				}
@@ -529,6 +541,84 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 		}
 		table.repaint();
 		table.revalidate();
+	}
+	
+	private List<ProductRow> buildProductRowList(){
+		List<ProductRow> list = new LinkedList<ProductRow>();
+		UploadListTableModel model = (UploadListTableModel)table.getModel();
+		ProductRow productRow;
+		Date date = ((Calendar)datePanel.getModel().getValue()).getTime();
+		Distributor distributor = (Distributor)comboBoxDistributors.getSelectedItem();
+		
+		for(int i=0; i < model.getRowCount(); i++){
+			DataRow row = (DataRow) model.getValueAt(i, -1);
+			if(!row.isValid())continue;
+			if(row.getTrack().getRightSet() == null)continue;
+			double authorIncome;
+			double relatedIncome;
+			if(distributor.getColumnIncomeType() == 0){
+				authorIncome = ((double)distributor.getAuthorRights() / 100) * row.getIncome();
+				relatedIncome = ((double)distributor.getRelatedRights() / 100) * row.getIncome();
+			}else{
+				authorIncome = row.getIncome();
+				relatedIncome = row.getIncomeRelated();
+			}
+			for(TRight right : row.getTrack().getRightSet()){
+				if(comboBoxRightType.getSelectedIndex() == 0){
+					if(right.getAuthor() > 0) {
+						productRow = new ProductRow();
+						productRow.setArtist(right.getArtist());
+						productRow.setTrack(row.getTrack());
+						productRow.setDistributor(distributor);
+						productRow.setQuantity(row.getQuantity());
+						productRow.setType(row.getType());
+						productRow.setRightType(TRightType.AUTHOR);
+						productRow.setIncome(((double)right.getAuthor() / 100) * authorIncome);
+						productRow.setDate(date);
+						list.add(productRow);
+					}
+					if(right.getRelated() > 0) {
+						productRow = new ProductRow();
+						productRow.setArtist(right.getArtist());
+						productRow.setTrack(row.getTrack());
+						productRow.setDistributor(distributor);
+						productRow.setQuantity(row.getQuantity());
+						productRow.setType(row.getType());
+						productRow.setRightType(TRightType.RELATED);
+						productRow.setIncome(((double)right.getRelated() / 100) * relatedIncome);
+						productRow.setDate(date);
+						list.add(productRow);
+					}
+					
+				}
+				if(comboBoxRightType.getSelectedIndex() == 1 && right.getAuthor() > 0) {
+					productRow = new ProductRow();
+					productRow.setArtist(right.getArtist());
+					productRow.setTrack(row.getTrack());
+					productRow.setDistributor(distributor);
+					productRow.setQuantity(row.getQuantity());
+					productRow.setType(row.getType());
+					productRow.setRightType(TRightType.AUTHOR);
+					productRow.setIncome(((double)right.getAuthor() / 100) * row.getIncome());
+					productRow.setDate(date);
+					list.add(productRow);
+				}
+				if(comboBoxRightType.getSelectedIndex() == 2 && right.getRelated() > 0) {
+					productRow = new ProductRow();
+					productRow.setArtist(right.getArtist());
+					productRow.setTrack(row.getTrack());
+					productRow.setDistributor(distributor);
+					productRow.setQuantity(row.getQuantity());
+					productRow.setType(row.getType());
+					productRow.setRightType(TRightType.RELATED);
+					productRow.setIncome(((double)right.getRelated() / 100) * row.getIncome());
+					productRow.setDate(date);
+					list.add(productRow);
+				}
+			}
+		}
+		
+		return list;
 	}
 	
 	

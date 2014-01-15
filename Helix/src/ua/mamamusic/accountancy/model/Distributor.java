@@ -18,7 +18,8 @@ public class Distributor {
 	
 	private int authorRights;
 	private int relatedRights;
-	
+	private int columnRelatedIncome;
+	private int columnIncomeType;
 	
 	public long getId() {
 		return id;
@@ -101,6 +102,18 @@ public class Distributor {
 	}
 	public void setRelatedRights(int relatedRights) {
 		this.relatedRights = relatedRights;
+	}
+	public int getColumnIncomeType() {
+		return columnIncomeType;
+	}
+	public void setColumnIncomeType(int columnIncomeType) {
+		this.columnIncomeType = columnIncomeType;
+	}
+	public int getColumnRelatedIncome() {
+		return columnRelatedIncome;
+	}
+	public void setColumnRelatedIncome(int columnRelatedIncome) {
+		this.columnRelatedIncome = columnRelatedIncome;
 	}
 	
 	

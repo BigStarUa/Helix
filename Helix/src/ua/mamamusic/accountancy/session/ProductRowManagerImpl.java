@@ -15,26 +15,27 @@ import org.hibernate.criterion.Restrictions;
 import ua.mamamusic.accountancy.HibernateUtil;
 import ua.mamamusic.accountancy.dao.ArtistDAO;
 import ua.mamamusic.accountancy.dao.ArtistDAOimpl;
-import ua.mamamusic.accountancy.dao.DataRowDAO;
-import ua.mamamusic.accountancy.dao.DataRowDAOimpl;
+import ua.mamamusic.accountancy.dao.ProductRowDAO;
+import ua.mamamusic.accountancy.dao.ProductRowDAOimpl;
 import ua.mamamusic.accountancy.dao.TrackDAO;
 import ua.mamamusic.accountancy.dao.TrackDAOimpl;
 import ua.mamamusic.accountancy.model.Artist;
 import ua.mamamusic.accountancy.model.DataRow;
 import ua.mamamusic.accountancy.model.Distributor;
+import ua.mamamusic.accountancy.model.ProductRow;
 import ua.mamamusic.accountancy.model.Track;
 import ua.mamamusic.accountancy.model.TrackType;
 
-public class DataRowManagerImpl implements DataRowManager{
+public class ProductRowManagerImpl implements ProductRowManager{
 
-	private DataRowDAO trackDAO = new DataRowDAOimpl();
+	private ProductRowDAO trackDAO = new ProductRowDAOimpl();
 	
 	@Override
-	public DataRow findDataRowById(long id) {
-		DataRow row = null;
+	public ProductRow findDataRowById(long id) {
+		ProductRow row = null;
 		try{
 			HibernateUtil.beginTransaction();
-			row = trackDAO.findById(DataRow.class, id);
+			row = trackDAO.findById(ProductRow.class, id);
 			HibernateUtil.commitTransaction();
 		}catch(HibernateException he){
 			
@@ -43,7 +44,7 @@ public class DataRowManagerImpl implements DataRowManager{
 	}
 
 	@Override
-	public void saveNewDataRow(DataRow row) {
+	public void saveNewDataRow(ProductRow row) {
 		try{
 			HibernateUtil.beginTransaction();
 			trackDAO.save(row);
@@ -54,10 +55,10 @@ public class DataRowManagerImpl implements DataRowManager{
 	}
 	
 	@Override
-	public void saveNewDataRowList(List<DataRow> list) {
+	public void saveNewDataRowList(List<ProductRow> list) {
 		try{
 			HibernateUtil.beginTransaction();
-			for(DataRow row : list){
+			for(ProductRow row : list){
 				trackDAO.save(row);
 			}
 			HibernateUtil.commitTransaction();
@@ -67,7 +68,7 @@ public class DataRowManagerImpl implements DataRowManager{
 	}
 
 	@Override
-	public void deleteDataRow(DataRow row) {
+	public void deleteDataRow(ProductRow row) {
 		try{
 			HibernateUtil.beginTransaction();
 			trackDAO.delete(row);
@@ -79,11 +80,11 @@ public class DataRowManagerImpl implements DataRowManager{
 	}
 	
 	@Override
-	public List<DataRow> loadAllDataRowsByPeriod(Date start, Date end, Distributor distributor) {
-		List<DataRow> list = null;
+	public List<ProductRow> loadAllDataRowsByPeriod(Date start, Date end, Distributor distributor) {
+		List<ProductRow> list = null;
 		try{
 			HibernateUtil.beginTransaction();
-			Criteria c = HibernateUtil.getSession().createCriteria(DataRow.class);
+			Criteria c = HibernateUtil.getSession().createCriteria(ProductRow.class);
 			c.add( Restrictions.between("date", start, end) );
 			c.add( Restrictions.eq("distributor", distributor) );
 			list = c.list();
@@ -100,7 +101,7 @@ public class DataRowManagerImpl implements DataRowManager{
 		List<Object[]> list = null;
 		try{
 			HibernateUtil.beginTransaction();
-			Criteria c = HibernateUtil.getSession().createCriteria(DataRow.class);
+			Criteria c = HibernateUtil.getSession().createCriteria(ProductRow.class);
 			
 			c.add( Restrictions.between("date", start, end) );
 			
