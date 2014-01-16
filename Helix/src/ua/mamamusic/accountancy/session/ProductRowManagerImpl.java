@@ -135,4 +135,47 @@ public class ProductRowManagerImpl implements ProductRowManager{
 		}
 		return list;
 	}
+	
+	@Override
+	public List<Object[]> loadData(Artist[] artList, Distributor distributor,
+			TrackType type, Date start, Date end, boolean groupDistrib, boolean groupType, boolean groupDate) {
+		List<Object[]> list = null;
+		try{
+			HibernateUtil.beginTransaction();
+			Criteria c = HibernateUtil.getSession().createCriteria(ProductRow.class);
+			
+			c.add( Restrictions.between("date", start, end) );
+			
+			if(distributor != null){
+				c.add( Restrictions.eq("distributor", distributor) );
+			}
+			if(artList != null){
+				c.add( Restrictions.in("artist", artList) );
+			}
+			if(type != null){
+				c.add( Restrictions.eq("type", type) );
+			}
+			ProjectionList projList = Projections.projectionList();
+			projList.add(Projections.groupProperty("artist"));
+			projList.add(Projections.groupProperty("track"));
+			if(groupType){
+				projList.add(Projections.groupProperty("type"));
+			}
+			if(groupDistrib){
+				projList.add(Projections.groupProperty("distributor"));
+			}
+			//projList.add(Projections.groupProperty("quantity"));
+			projList.add(Projections.sum("income"));
+			if(groupDate){
+				projList.add(Projections.groupProperty("date"));
+			}
+			c.setProjection(projList);
+			
+			list = c.list();
+			HibernateUtil.commitTransaction();
+		}catch(HibernateException he){
+			
+		}
+		return list;
+	}
 }

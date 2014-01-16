@@ -14,6 +14,8 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -348,7 +350,7 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 
 				}else{
 				
-					//drm.saveNewDataRowList(prodList);
+					drm.saveNewDataRowList(prodList);
 					JOptionPane.showMessageDialog(UploadForm.this,
 							prodList.size() + " row of data inserted in database",
 						    "Done",
@@ -543,6 +545,32 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 		table.revalidate();
 	}
 	
+	private ProductRow createProductRow(DataRow row, Artist artist, Distributor distributor, TRightType type, Date date, int rightPercent){
+		ProductRow productRow = new ProductRow();
+		productRow.setTrack(row.getTrack());
+		productRow.setQuantity(row.getQuantity());
+		productRow.setType(row.getType());
+		productRow.setArtist(artist);
+		productRow.setDistributor(distributor);
+		productRow.setRightType(type);
+		productRow.setDate(date);
+		productRow.setRightPercent(rightPercent);
+		return productRow;
+	}
+	
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    BigDecimal bd = new BigDecimal(value);
+	    bd = bd.setScale(places, BigDecimal.ROUND_HALF_UP);
+        System.out.println(bd.doubleValue());
+	    return bd.doubleValue();
+	}
+	public static double round(double value) {
+	double roundOff = (double) Math.round(value * 100) / 100;
+	  return roundOff;
+	}
+	
 	private List<ProductRow> buildProductRowList(){
 		List<ProductRow> list = new LinkedList<ProductRow>();
 		UploadListTableModel model = (UploadListTableModel)table.getModel();
@@ -556,65 +584,73 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 			if(row.getTrack().getRightSet() == null)continue;
 			double authorIncome;
 			double relatedIncome;
-			if(distributor.getColumnIncomeType() == 0){
-				authorIncome = ((double)distributor.getAuthorRights() / 100) * row.getIncome();
-				relatedIncome = ((double)distributor.getRelatedRights() / 100) * row.getIncome();
+			if(distributor.getColumnIncomeType() == 0 && comboBoxRightType.getSelectedIndex() == 0){
+//				authorIncome = ((double)distributor.getAuthorRights() / 100) * row.getIncome();
+//				relatedIncome = ((double)distributor.getRelatedRights() / 100) * row.getIncome();
+				authorIncome = UploadForm.round(((double)distributor.getAuthorRights() / 100) * row.getIncome(), 2);
+				relatedIncome = row.getIncome() - authorIncome;
 			}else{
-				authorIncome = row.getIncome();
-				relatedIncome = row.getIncomeRelated();
+				if(comboBoxRightType.getSelectedIndex() == 1){
+					authorIncome = row.getIncome();
+					relatedIncome = 0;
+				}else{
+					authorIncome = 0;
+					relatedIncome = row.getIncome();
+				}
+				
 			}
+			int nA = 1;
+			int nR = 1;
+			int count = row.getTrack().getRightSet().size();
+			double roundedAuthorIncome = 0;
+			double roundedRelatedIncome = 0;
 			for(TRight right : row.getTrack().getRightSet()){
-				if(comboBoxRightType.getSelectedIndex() == 0){
-					if(right.getAuthor() > 0) {
-						productRow = new ProductRow();
-						productRow.setArtist(right.getArtist());
-						productRow.setTrack(row.getTrack());
-						productRow.setDistributor(distributor);
-						productRow.setQuantity(row.getQuantity());
-						productRow.setType(row.getType());
-						productRow.setRightType(TRightType.AUTHOR);
-						productRow.setIncome(((double)right.getAuthor() / 100) * authorIncome);
-						productRow.setDate(date);
+//				if(comboBoxRightType.getSelectedIndex() == 0){
+					if(right.getAuthor() > 0 && (comboBoxRightType.getSelectedIndex() == 0 || comboBoxRightType.getSelectedIndex() == 1)) {
+						productRow = createProductRow(row, right.getArtist(), distributor, TRightType.AUTHOR, date, right.getAuthor());
+						if(count == 2){
+							if(nA == 1){
+								roundedAuthorIncome = UploadForm.round(((double)right.getAuthor() / 100) * authorIncome, 2);
+								productRow.setIncome(roundedAuthorIncome);
+							}else{
+								productRow.setIncome(UploadForm.round(authorIncome - roundedAuthorIncome, 2));
+								roundedAuthorIncome = 0;
+							}
+						}else{
+							productRow.setIncome(UploadForm.round(((double)right.getAuthor() / 100) * authorIncome, 2));
+						}
 						list.add(productRow);
+						nA++;
 					}
-					if(right.getRelated() > 0) {
-						productRow = new ProductRow();
-						productRow.setArtist(right.getArtist());
-						productRow.setTrack(row.getTrack());
-						productRow.setDistributor(distributor);
-						productRow.setQuantity(row.getQuantity());
-						productRow.setType(row.getType());
-						productRow.setRightType(TRightType.RELATED);
-						productRow.setIncome(((double)right.getRelated() / 100) * relatedIncome);
-						productRow.setDate(date);
+					if(right.getRelated() > 0 && (comboBoxRightType.getSelectedIndex() == 0 || comboBoxRightType.getSelectedIndex() == 2)) {
+						productRow = createProductRow(row, right.getArtist(), distributor, TRightType.RELATED, date, right.getRelated());
+						if(count == 2){
+							if(nR == 1){
+								roundedRelatedIncome = UploadForm.round(((double)right.getRelated() / 100) * relatedIncome, 2);
+								productRow.setIncome(roundedRelatedIncome);
+								
+							}else{
+								productRow.setIncome(UploadForm.round(relatedIncome - roundedRelatedIncome, 2));
+								roundedRelatedIncome = 0;
+							}
+						}else{
+							productRow.setIncome(UploadForm.round(((double)right.getRelated() / 100) * relatedIncome, 2));
+						}
 						list.add(productRow);
+						nR++;
 					}
 					
-				}
-				if(comboBoxRightType.getSelectedIndex() == 1 && right.getAuthor() > 0) {
-					productRow = new ProductRow();
-					productRow.setArtist(right.getArtist());
-					productRow.setTrack(row.getTrack());
-					productRow.setDistributor(distributor);
-					productRow.setQuantity(row.getQuantity());
-					productRow.setType(row.getType());
-					productRow.setRightType(TRightType.AUTHOR);
-					productRow.setIncome(((double)right.getAuthor() / 100) * row.getIncome());
-					productRow.setDate(date);
-					list.add(productRow);
-				}
-				if(comboBoxRightType.getSelectedIndex() == 2 && right.getRelated() > 0) {
-					productRow = new ProductRow();
-					productRow.setArtist(right.getArtist());
-					productRow.setTrack(row.getTrack());
-					productRow.setDistributor(distributor);
-					productRow.setQuantity(row.getQuantity());
-					productRow.setType(row.getType());
-					productRow.setRightType(TRightType.RELATED);
-					productRow.setIncome(((double)right.getRelated() / 100) * row.getIncome());
-					productRow.setDate(date);
-					list.add(productRow);
-				}
+//				}
+//				if(comboBoxRightType.getSelectedIndex() == 1 && right.getAuthor() > 0) {
+//					productRow = createProductRow(row, right.getArtist(), distributor, TRightType.AUTHOR, date, right.getAuthor());
+//					productRow.setIncome(((double)right.getAuthor() / 100) * row.getIncome());
+//					list.add(productRow);
+//				}
+//				if(comboBoxRightType.getSelectedIndex() == 2 && right.getRelated() > 0) {
+//					productRow = createProductRow(row, right.getArtist(), distributor, TRightType.RELATED, date, right.getRelated());
+//					productRow.setIncome(((double)right.getRelated() / 100) * row.getIncome());
+//					list.add(productRow);
+//				}
 			}
 		}
 		
@@ -639,12 +675,10 @@ class MyComboBoxModel extends AbstractListModel<Distributor> implements ComboBox
   }
   
   public Distributor getElementAt(int index) {
-    //return ComputerComps[index];
     return list.get(index);
   }
 
   public int getSize() {
-    //return ComputerComps.length;
 	  return list.size();
   }
 

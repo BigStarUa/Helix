@@ -14,7 +14,9 @@ import ua.mamamusic.accountancy.model.Artist;
 import ua.mamamusic.accountancy.model.Distributor;
 import ua.mamamusic.accountancy.model.GenericComboBoxModel;
 import ua.mamamusic.accountancy.model.GenericListModel;
+import ua.mamamusic.accountancy.model.ProductRow;
 import ua.mamamusic.accountancy.model.ReportTableModel;
+import ua.mamamusic.accountancy.model.TempReportTableModel;
 import ua.mamamusic.accountancy.model.TrackType;
 import ua.mamamusic.accountancy.session.ArtistManager;
 import ua.mamamusic.accountancy.session.ArtistManagerImpl;
@@ -65,6 +67,9 @@ import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import javax.swing.JCheckBox;
 
 import jxl.write.WriteException;
+import javax.swing.Box;
+import javax.swing.SwingConstants;
+import javax.swing.JLabel;
 
 public class ReportForm extends AbstractJPanel {
 
@@ -122,7 +127,7 @@ public class ReportForm extends AbstractJPanel {
 	}
 	
 	private void build() {
-		setBounds(100, 100, 650, 560);
+		setBounds(100, 100, 650, 600);
 		setLayout(new BorderLayout());
 		contentPanel.setBackground(Color.WHITE);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -178,48 +183,6 @@ public class ReportForm extends AbstractJPanel {
 			});
 			panel_1.add(chckbxGroupDistrib, BorderLayout.NORTH);
 			
-			JPanel panel_2 = new JPanel();
-			panel_2.setBackground(Color.WHITE);
-			panel_2.setBorder(new TitledBorder(null, "Date from", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panel_2.setBounds(10, 342, 230, 46);
-			panel.add(panel_2);
-			panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.X_AXIS));
-			
-			
-			AbstractFormatter ab = new AbstractFormatter() {
-				@Override
-				public String valueToString(Object value) throws ParseException {
-					SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-					Date date = new Date();
-					if(value != null) {
-						date = ((Calendar)value).getTime();
-						return sdf.format(date);
-					}
-					return "";
-				}
-				
-				@Override
-				public Object stringToValue(String text) throws ParseException {
-					return null;
-				}
-			};
-			
-			JDatePanelImpl pan = new JDatePanelImpl(null);
-			dateStart = new JDatePickerImpl(pan, ab);
-			panel_2.add((Component)dateStart);
-			
-			
-			JPanel panel_3 = new JPanel();
-			panel_3.setBackground(Color.WHITE);
-			panel_3.setBorder(new TitledBorder(null, "Date till", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panel_3.setBounds(10, 389, 230, 46);
-			panel.add(panel_3);
-			panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
-			
-			JDatePanelImpl pan2 = new JDatePanelImpl(null);
-			dateEnd = new JDatePickerImpl(pan2, ab);
-			panel_3.add((Component)dateEnd);
-			
 			JPanel panel_4 = new JPanel();
 			panel_4.setBackground(Color.WHITE);
 			panel_4.setBorder(new TitledBorder(null, "Type", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -246,8 +209,66 @@ public class ReportForm extends AbstractJPanel {
 			});
 			panel_4.add(chckbxGroupType, BorderLayout.NORTH);
 			
+			JPanel panel_2 = new JPanel();
+			panel_2.setBackground(Color.WHITE);
+			panel_2.setBorder(new TitledBorder(null, "Date from", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			panel_2.setBounds(10, 342, 230, 102);
+			panel.add(panel_2);
+			
+			
+			AbstractFormatter ab = new AbstractFormatter() {
+				@Override
+				public String valueToString(Object value) throws ParseException {
+					SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+					Date date = new Date();
+					if(value != null) {
+						date = ((Calendar)value).getTime();
+						return sdf.format(date);
+					}
+					return "";
+				}
+				
+				@Override
+				public Object stringToValue(String text) throws ParseException {
+					return null;
+				}
+			};
+			panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
+			
+			Box horizontalBox_2 = Box.createHorizontalBox();
+			panel_2.add(horizontalBox_2);
+			
+			JCheckBox chckbxGroupDate = new JCheckBox("Group");
+			chckbxGroupDate.setVerticalAlignment(SwingConstants.TOP);
+			chckbxGroupDate.setBackground(Color.WHITE);
+			horizontalBox_2.add(chckbxGroupDate);
+			
+			Box horizontalBox = Box.createHorizontalBox();
+			panel_2.add(horizontalBox);
+			
+			JDatePanelImpl pan = new JDatePanelImpl(null);
+			
+			JLabel lblFrom = new JLabel("From:");
+			horizontalBox.add(lblFrom);
+			dateStart = new JDatePickerImpl(pan, ab);
+			horizontalBox.add((Component)dateStart);
+			
+			Component rigidArea = Box.createRigidArea(new Dimension(20, 5));
+			panel_2.add(rigidArea);
+			
+			Box horizontalBox_1 = Box.createHorizontalBox();
+			panel_2.add(horizontalBox_1);
+			
+			
+			JDatePanelImpl pan2 = new JDatePanelImpl(null);
+			
+			JLabel lblTill = new JLabel("Till:   ");
+			horizontalBox_1.add(lblTill);
+			dateEnd = new JDatePickerImpl(pan2, ab);
+			horizontalBox_1.add((Component)dateEnd);
+			
 			JButton btnGetData = new JButton("Get data", IconFactory.TABLES32_ICON);
-			btnGetData.setBounds(65, 437, 117, 35);
+			btnGetData.setBounds(65, 466, 117, 35);
 			btnGetData.addActionListener(new ActionListener() {	
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -269,7 +290,9 @@ public class ReportForm extends AbstractJPanel {
 						}
 						
 						ProductRowManager drm = new ProductRowManagerImpl();
-						List<Object[]> dataRowList = drm.loadDataRowsByCriterias(array, distr, type, start, end, chckbxGroupDistrib.isSelected(), chckbxGroupType.isSelected());
+						//List<Object[]> dataRowList = drm.loadDataRowsByCriterias(array, distr, type, start, end, chckbxGroupDistrib.isSelected(), chckbxGroupType.isSelected());
+						List<Object[]> dataRowList = drm.loadData(array, distr, type, start, end, chckbxGroupDistrib.isSelected(), chckbxGroupType.isSelected(), false);
+						//List<ProductRow> dataRowList = drm.loadAllDataRowsByPeriod(start, end, distr);
 						
 						TableModel model = new ReportTableModel(dataRowList);
 						table.setModel(model);

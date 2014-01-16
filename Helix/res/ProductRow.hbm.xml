@@ -29,6 +29,8 @@
 	    <param name="enumClass">ua.mamamusic.accountancy.model.TRightType</param>
 	  </type>
 	</property>
+	
+	<property name="rightPercent" column="RIGHT_PERCENT" type="integer"></property>
      
 </class>
 </hibernate-mapping>

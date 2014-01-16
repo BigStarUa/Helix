@@ -13,6 +13,7 @@ public class ProductRow {
 	private Date date;
 	private Distributor distributor;
 	private TRightType rightType;
+	private int rightPercent;
 	
 	public long getId() {
 		return id;
@@ -67,6 +68,12 @@ public class ProductRow {
 	}
 	public void setRightType(TRightType rightType) {
 		this.rightType = rightType;
+	}
+	public int getRightPercent() {
+		return rightPercent;
+	}
+	public void setRightPercent(int rightPercent) {
+		this.rightPercent = rightPercent;
 	}
 	
 	
