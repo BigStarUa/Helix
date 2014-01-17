@@ -120,6 +120,7 @@ public class UploadListTableCellEditor extends AbstractCellEditor implements Tab
 		
 		panel.removeAll();
 		
+		if(value == null) value = "";
 		lable.setText(value.toString());
 		
 		// Converting row index because of sorting
@@ -142,7 +143,7 @@ public class UploadListTableCellEditor extends AbstractCellEditor implements Tab
 		    			panel.add(addTrackButton, BorderLayout.WEST);
 	    			}
     			}
-    			if(product.getType() == null){
+    			if(product.getType() == null && product.getDistributor().getColumnTrackType() >= 0){
     				panel.setBackground(Color.YELLOW);
 	    			if(col == 2){
 		    			panel.add(addTypeButton, BorderLayout.WEST);

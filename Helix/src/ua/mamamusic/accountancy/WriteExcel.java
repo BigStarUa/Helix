@@ -7,8 +7,10 @@ import java.util.Locale;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
+import ua.mamamusic.accountancy.model.Artist;
 import ua.mamamusic.accountancy.model.DataRow;
 import ua.mamamusic.accountancy.model.Distributor;
+import ua.mamamusic.accountancy.model.Track;
 import ua.mamamusic.accountancy.model.TrackType;
 import jxl.CellView;
 import jxl.Workbook;
@@ -91,36 +93,28 @@ public class WriteExcel {
 	    for (int i = 0; i < model.getRowCount(); i++) {
 	    	row = (Object[])model.getValueAt(i, -1);
 	    	
-	    	addLabel(sheet, 0, i, row[0].toString());
-	    	
-	    	addLabel(sheet, 1, i, row[1].toString());
-	    	
-	    	if(row[2] instanceof TrackType || row[2] instanceof Distributor){
-	    		addLabel(sheet, 2, i, row[2].toString());
-	    	}else{
-	    		addNumber(sheet, 2, i, (Long)row[2]);
+	    	for(int n = 0;n < row.length; n++){
+	    		addCellFromObject(sheet, n, i, row[n]);
 	    	}
-	    	
-	    	if(row[3] instanceof Distributor){
-	    		addLabel(sheet, 3, i, row[3].toString());
-	    	}else if(row[3] instanceof Long){
-	    		addNumber(sheet, 3, i, (Long)row[3]);
-	    	}else{
-	    		 addNumber(sheet, 3, i, (Double)row[3]);
-	    	}
-	    	
-	    	if(row.length == 5){
-	    		addNumber(sheet, 4, i, (Double)row[4]);
-	    	}else if(row.length == 6){
-	    		 // First column
-	  	      addNumber(sheet, 4, i, (Long)row[4]);
-	  	      // Second column
-	  	      addNumber(sheet, 5, i, (Double)row[5]);
-	    	}
-
 	    }
 
 	  }
+	  
+	  private void addCellFromObject(WritableSheet sheet, int column, int row, Object object) throws RowsExceededException, WriteException{
+			if(object instanceof Artist){
+				addLabel(sheet, column, row, object.toString());
+			}else if(object instanceof Track){
+				addLabel(sheet, column, row, object.toString());
+			}else if(object instanceof Distributor){
+				addLabel(sheet, column, row, object.toString());
+			}else if(object instanceof Double){
+				addNumber(sheet, column, row, (Double)object);
+			}else if(object instanceof Long){
+				addNumber(sheet, column, row, (Long)object);
+			}else{
+				addLabel(sheet, column, row, object.toString());
+			}
+		}
 
 	  private void addCaption(WritableSheet sheet, int column, int row, String s)
 	      throws RowsExceededException, WriteException {

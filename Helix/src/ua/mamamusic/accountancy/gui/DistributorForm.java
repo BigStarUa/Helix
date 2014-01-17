@@ -73,7 +73,6 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 	private JTextField txtName;
 	private JLabel lblProductname;
 	private JTextField txtColumnCount;
-	private JTextField txtColumnId;
 	private JTextField txtColumnPrice;
 	private JList<DistributorAlias> aliasList;
 	private GenericListModel<DistributorAlias> model;
@@ -103,17 +102,16 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 		txtName.setText(distributor.getName());
 		if(distributor != null && distributor.getId() > 0){
 			lblProductname.setText(distributor.getName());
-			txtColumnCount.setText(String.valueOf(distributor.getColumnCount()));
-			txtColumnId.setText(String.valueOf(distributor.getColumnId()));
-			txtColumnPrice.setText(String.valueOf(distributor.getColumnPrice()));
-			txtArtist.setText(String.valueOf(distributor.getColumnArtist()));
-			txtTrack.setText(String.valueOf(distributor.getColumnTrack()));
-			txtType.setText(String.valueOf(distributor.getColumnTrackType()));
-			txtColumnquantity.setText(String.valueOf(distributor.getColumnQuantity()));
+			txtColumnCount.setText(String.valueOf(distributor.getColumnCount() + 1));
+			txtColumnPrice.setText(String.valueOf(distributor.getColumnPrice() + 1));
+			txtArtist.setText(String.valueOf(distributor.getColumnArtist() + 1));
+			txtTrack.setText(String.valueOf(distributor.getColumnTrack() + 1));
+			txtType.setText(String.valueOf(distributor.getColumnTrackType() + 1));
+			txtColumnquantity.setText(String.valueOf(distributor.getColumnQuantity() + 1));
 			txtAuthor.setText(String.valueOf(distributor.getAuthorRights()));
 			txtRelated.setText(String.valueOf(distributor.getRelatedRights()));
 			
-			txtRelatedColumn.setText(String.valueOf(distributor.getColumnRelatedIncome()));
+			txtRelatedColumn.setText(String.valueOf(distributor.getColumnRelatedIncome() + 1));
 			comboBoxIncome.setSelectedIndex(distributor.getColumnIncomeType());
 			repaintIncomeGroup();
 			
@@ -242,20 +240,10 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 					lblColumnCount.setBounds(10, 11, 120, 20);
 					panelCharacteristic.add(lblColumnCount);
 					
-					JLabel lblIdColumn = new JLabel("ID Column");
-					lblIdColumn.setFont(new Font("Tahoma", Font.PLAIN, 14));
-					lblIdColumn.setBounds(10, 42, 120, 20);
-					panelCharacteristic.add(lblIdColumn);
-					
 					txtColumnCount = new JTextField();
 					txtColumnCount.setBounds(140, 13, 86, 20);
 					panelCharacteristic.add(txtColumnCount);
 					txtColumnCount.setColumns(10);
-					
-					txtColumnId = new JTextField();
-					txtColumnId.setColumns(10);
-					txtColumnId.setBounds(140, 44, 86, 20);
-					panelCharacteristic.add(txtColumnId);
 					
 					JLabel lblArtistColumn = new JLabel("Artist Column");
 					lblArtistColumn.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -289,17 +277,17 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 					
 					txtColumnquantity = new JTextField();
 					txtColumnquantity.setColumns(10);
-					txtColumnquantity.setBounds(396, 13, 86, 20);
+					txtColumnquantity.setBounds(140, 44, 86, 20);
 					panelCharacteristic.add(txtColumnquantity);
 					
 					JLabel lblColumnQuantity = new JLabel("Column quantity");
 					lblColumnQuantity.setFont(new Font("Tahoma", Font.PLAIN, 14));
-					lblColumnQuantity.setBounds(266, 11, 120, 20);
+					lblColumnQuantity.setBounds(10, 42, 120, 20);
 					panelCharacteristic.add(lblColumnQuantity);
 					
 					JPanel panel = new JPanel();
 					panel.setBorder(new TitledBorder(null, "Income Columns", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-					panel.setBounds(266, 52, 216, 105);
+					panel.setBounds(264, 11, 216, 105);
 					panelCharacteristic.add(panel);
 					panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 					
@@ -460,19 +448,18 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 	private void pushDataToProduct(){
 		try{
 			distributor.setName(txtName.getText());
-			distributor.setColumnCount(Integer.valueOf(txtColumnCount.getText()));
-			distributor.setColumnId(Integer.valueOf(txtColumnId.getText()));
-			distributor.setColumnPrice(Integer.valueOf(txtColumnPrice.getText()));
-			distributor.setColumnArtist(Integer.valueOf(txtArtist.getText()));
-			distributor.setColumnTrack(Integer.valueOf(txtTrack.getText()));
-			distributor.setColumnTrackType(Integer.valueOf(txtType.getText()));
-			distributor.setColumnQuantity(Integer.valueOf(txtColumnquantity.getText()));
+			distributor.setColumnCount(Integer.valueOf(txtColumnCount.getText()) - 1);
+			distributor.setColumnPrice(Integer.valueOf(txtColumnPrice.getText()) - 1);
+			distributor.setColumnArtist(Integer.valueOf(txtArtist.getText()) - 1);
+			distributor.setColumnTrack(Integer.valueOf(txtTrack.getText()) - 1);
+			distributor.setColumnTrackType(Integer.valueOf(txtType.getText()) - 1);
+			distributor.setColumnQuantity(Integer.valueOf(txtColumnquantity.getText()) - 1);
 			distributor.setAuthorRights(Integer.valueOf(txtAuthor.getText()));
 			distributor.setRelatedRights(Integer.valueOf(txtRelated.getText()));
 			distributor.setColumnIncomeType(comboBoxIncome.getSelectedIndex());
 			
 			if(comboBoxIncome.getSelectedIndex() == 1){
-				distributor.setColumnRelatedIncome(Integer.parseInt(txtRelatedColumn.getText()));
+				distributor.setColumnRelatedIncome(Integer.parseInt(txtRelatedColumn.getText()) - 1);
 			}
 			
 			Set<DistributorAlias> set = new HashSet<DistributorAlias>();

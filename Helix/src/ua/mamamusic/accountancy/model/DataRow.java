@@ -94,7 +94,7 @@ public class DataRow {
 		this.columnTrackType = columnTrackType;
 	}
 	public boolean isValid() {
-		if(getArtist() != null && getTrack() != null && getType() != null) return true;
+		if(getArtist() != null && getTrack() != null) return true;
 		
 		return false;
 	}

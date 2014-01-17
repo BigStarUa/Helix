@@ -23,7 +23,7 @@ public class UploadListTableModel extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 5;
+		return 6;
 	}
 
 	@Override
@@ -45,6 +45,8 @@ public class UploadListTableModel extends AbstractTableModel {
 			return productEntity.getColumnQuantity();
 		case 4:
 			return productEntity.getColumnPrice();
+		case 5:
+			return productEntity.getColumnRelatedIncome();
 		case -1:
 			return productEntity;
 		}

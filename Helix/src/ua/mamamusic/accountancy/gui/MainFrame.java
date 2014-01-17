@@ -32,6 +32,7 @@ import ua.mamamusic.accountancy.action.DistributorsListOpenAction;
 import ua.mamamusic.accountancy.action.ReportFormOpenAction;
 import ua.mamamusic.accountancy.action.TrackListOpenAction;
 import ua.mamamusic.accountancy.action.TrackTypeListOpenAction;
+import ua.mamamusic.accountancy.action.TrashFormOpenAction;
 import ua.mamamusic.accountancy.action.UploadFormOpenAction;
 import ua.mamamusic.accountancy.model.Distributor;
 import ua.mamamusic.accountancy.session.DistributorManagerImpl;
@@ -75,6 +76,8 @@ public class MainFrame extends JFrame implements ChangeListener {
 	private JButton btnTrack;
 	private AbstractButton mntmTrack;
 	private TrackListOpenAction openTrackAction;
+	private AbstractButton btnTrash;
+	private TrashFormOpenAction openTrashFormAction;
 
 	/**
 	 * Create the frame.
@@ -134,6 +137,7 @@ public class MainFrame extends JFrame implements ChangeListener {
 		mnCatalog.add(mntmUploader);
 		
 		openReportFormAction = new ReportFormOpenAction(tabbedPane, "Reports");
+		openTrashFormAction = new TrashFormOpenAction(tabbedPane, "Trash");
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -189,6 +193,14 @@ public class MainFrame extends JFrame implements ChangeListener {
 		btnReports.setIcon(IconFactory.CHART32_ICON);
 		toolBar.add(btnReports);
 		
+		toolBarSeparator = new JToolBar.Separator();
+		toolBar.add(toolBarSeparator);
+		
+		btnTrash = new JButton();
+		btnTrash.setFocusable(false);
+		btnTrash.setAction(openTrashFormAction);
+		btnTrash.setIcon(IconFactory.CHART32_ICON);
+		toolBar.add(btnTrash);
 		
 		//Create file chooser
 		fc = new JFileChooser();

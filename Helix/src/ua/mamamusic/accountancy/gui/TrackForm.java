@@ -90,7 +90,7 @@ public class TrackForm extends AbstractJDialog implements TracksAliasListListene
 
 	private void populateForm(){		
 		txtName.setText(track.getName());
-		if(track != null && track.getId() > 0){
+		if(track != null){
 			lblProductname.setText(track.getName());
 			
 			List<TrackAlias> list;

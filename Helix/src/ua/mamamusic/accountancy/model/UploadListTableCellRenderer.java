@@ -46,10 +46,9 @@ public class UploadListTableCellRenderer extends DefaultTableCellRenderer {
 	   // String s = table.getModel().getValueAt(row, -1).toString();
 	    
 	    	JPanel panel = new JPanel();
-//	    	FlowLayout flowLayout = new FlowLayout();
-//			flowLayout.setAlignment(FlowLayout.LEFT);
-
 	    	panel.setLayout(new BorderLayout());
+	    	if(value == null) value = "";
+	    		
 	    	JLabel lable = new JLabel(value.toString());
 	    	lable.setFont(new Font("Tahoma", Font.PLAIN, 14));
 	    	
@@ -73,7 +72,7 @@ public class UploadListTableCellRenderer extends DefaultTableCellRenderer {
 			    			panel.add(addTrackButton, BorderLayout.WEST);
 		    			}
 	    			}
-	    			if(product.getType() == null){
+	    			if(product.getType() == null && product.getDistributor().getColumnTrackType() >= 0){
 	    				panel.setBackground(Color.YELLOW);
 		    			if(col == 2){
 			    			panel.add(addTypeButton, BorderLayout.WEST);

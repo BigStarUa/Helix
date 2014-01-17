@@ -11,9 +11,11 @@ public class ReportTableModel extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private List<Object[]> list;
+	private List<String> columnNameList;
 	
-	public ReportTableModel(List<Object[]> list){
+	public ReportTableModel(List<String> columnNameList, List<Object[]> list){
 		this.setList(list);
+		this.columnNameList = columnNameList;
 	}
 	
 	@Override
@@ -39,39 +41,25 @@ public class ReportTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Object[] productEntity = list.get(rowIndex);
-		switch (columnIndex) {
-		case 0:
-			return ((Artist)productEntity[0]).getName();
-		case 1:
-			return ((Track)productEntity[1]).getName();
-		case 2:
-			if(productEntity[2] instanceof TrackType){
-				return ((TrackType)productEntity[2]).getName();
-			}else if(productEntity[2] instanceof Distributor){
-				return ((Distributor)productEntity[2]).getName();
-			}else{
-				return productEntity[2];
-			}
-		case 3:
-			if(productEntity[3] instanceof Distributor){
-				return ((Distributor)productEntity[3]).getName();
-			}else if(productEntity[3] instanceof Double){
-				return String.format("%1$,.2f", productEntity[3]);
-			}else{
-				return productEntity[3];
-			}
-		case 4:
-			if(productEntity[4] instanceof Double){
-				return String.format("%1$,.2f", productEntity[4]);
-			}else{
-				return productEntity[4];
-			}
-		case 5:
-			return String.format("%1$,.2f", productEntity[5]);
-		case -1:
+		if(columnIndex == -1){
 			return productEntity;
 		}
-	return "";
+		
+		return getStringFromObject(productEntity[columnIndex]);
+	}
+	
+	private String getStringFromObject(Object object){
+		if(object instanceof Artist){
+			return ((Artist)object).getName();
+		}else if(object instanceof Track){
+			return ((Track)object).getName();
+		}else if(object instanceof Distributor){
+			return ((Distributor)object).getName();
+		}else if(object instanceof Double){
+			return String.format("%1$,.2f", object);
+		}else{
+			return object.toString();
+		}
 	}
 
 	@Override
@@ -82,11 +70,7 @@ public class ReportTableModel extends AbstractTableModel {
 
 	@Override
 	public String getColumnName(int column) {
-		switch (column) {
-		case 0:
-			return "Name";
-		}
-		return "";
+		return columnNameList.get(column);
 	}
 
 	public List<Object[]> getList() {

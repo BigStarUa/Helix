@@ -23,19 +23,20 @@ import ua.mamamusic.accountancy.model.Artist;
 import ua.mamamusic.accountancy.model.DataRow;
 import ua.mamamusic.accountancy.model.Distributor;
 import ua.mamamusic.accountancy.model.ProductRow;
+import ua.mamamusic.accountancy.model.TRightType;
 import ua.mamamusic.accountancy.model.Track;
 import ua.mamamusic.accountancy.model.TrackType;
 
 public class ProductRowManagerImpl implements ProductRowManager{
 
-	private ProductRowDAO trackDAO = new ProductRowDAOimpl();
+	private ProductRowDAO productRowDAO = new ProductRowDAOimpl();
 	
 	@Override
 	public ProductRow findDataRowById(long id) {
 		ProductRow row = null;
 		try{
 			HibernateUtil.beginTransaction();
-			row = trackDAO.findById(ProductRow.class, id);
+			row = productRowDAO.findById(ProductRow.class, id);
 			HibernateUtil.commitTransaction();
 		}catch(HibernateException he){
 			
@@ -47,7 +48,7 @@ public class ProductRowManagerImpl implements ProductRowManager{
 	public void saveNewDataRow(ProductRow row) {
 		try{
 			HibernateUtil.beginTransaction();
-			trackDAO.save(row);
+			productRowDAO.save(row);
 			HibernateUtil.commitTransaction();
 		}catch(HibernateException he){
 			HibernateUtil.rollbackTransaction();
@@ -59,7 +60,7 @@ public class ProductRowManagerImpl implements ProductRowManager{
 		try{
 			HibernateUtil.beginTransaction();
 			for(ProductRow row : list){
-				trackDAO.save(row);
+				productRowDAO.save(row);
 			}
 			HibernateUtil.commitTransaction();
 		}catch(HibernateException he){
@@ -71,7 +72,7 @@ public class ProductRowManagerImpl implements ProductRowManager{
 	public void deleteDataRow(ProductRow row) {
 		try{
 			HibernateUtil.beginTransaction();
-			trackDAO.delete(row);
+			productRowDAO.delete(row);
 			HibernateUtil.commitTransaction();
 		}catch(HibernateException he){
 			HibernateUtil.rollbackTransaction();
@@ -137,8 +138,8 @@ public class ProductRowManagerImpl implements ProductRowManager{
 	}
 	
 	@Override
-	public List<Object[]> loadData(Artist[] artList, Distributor distributor,
-			TrackType type, Date start, Date end, boolean groupDistrib, boolean groupType, boolean groupDate) {
+	public List<Object[]> loadData(Artist[] artList, Distributor distributor, TrackType type, Date start,
+			Date end, boolean groupDistrib, boolean groupType, boolean groupDate, boolean groupRight, TRightType rightType) {
 		List<Object[]> list = null;
 		try{
 			HibernateUtil.beginTransaction();
@@ -155,6 +156,9 @@ public class ProductRowManagerImpl implements ProductRowManager{
 			if(type != null){
 				c.add( Restrictions.eq("type", type) );
 			}
+			if(rightType != null){
+				c.add( Restrictions.eq("rightType", rightType) );
+			}
 			ProjectionList projList = Projections.projectionList();
 			projList.add(Projections.groupProperty("artist"));
 			projList.add(Projections.groupProperty("track"));
@@ -166,6 +170,9 @@ public class ProductRowManagerImpl implements ProductRowManager{
 			}
 			//projList.add(Projections.groupProperty("quantity"));
 			projList.add(Projections.sum("income"));
+			if(groupRight){
+				projList.add(Projections.groupProperty("rightType"));
+			}
 			if(groupDate){
 				projList.add(Projections.groupProperty("date"));
 			}
@@ -177,5 +184,18 @@ public class ProductRowManagerImpl implements ProductRowManager{
 			
 		}
 		return list;
+	}
+
+	@Override
+	public void deleteProductRowList(List<ProductRow> list) {
+		try{
+			HibernateUtil.beginTransaction();
+			for(ProductRow row : list){
+				productRowDAO.delete(row);
+			}
+			HibernateUtil.commitTransaction();
+		}catch(HibernateException he){
+			HibernateUtil.rollbackTransaction();
+		}
 	}
 }

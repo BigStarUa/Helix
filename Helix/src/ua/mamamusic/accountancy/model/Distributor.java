@@ -8,7 +8,6 @@ public class Distributor {
 	private String name;
 	private String ruleFilePath;
 	private int columnCount;
-	private int columnId;
 	private int columnPrice;
 	private int columnArtist;
 	private int columnTrack;
@@ -48,12 +47,6 @@ public class Distributor {
 	}
 	public void setColumnCount(int columnCount) {
 		this.columnCount = columnCount;
-	}
-	public int getColumnId() {
-		return columnId;
-	}
-	public void setColumnId(int columnId) {
-		this.columnId = columnId;
 	}
 	public int getColumnPrice() {
 		return columnPrice;

@@ -54,7 +54,7 @@ public class Main {
 				JFrame mainFrame = new MainFrame("MAMAMUSIC"); 
 				mainFrame.setIconImage(img);
 				mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				mainFrame.setPreferredSize(new Dimension(800, 700));
+				mainFrame.setPreferredSize(new Dimension(800, 800));
 				mainFrame.pack();
 				mainFrame.setVisible(true);
 				mainFrame.toFront();

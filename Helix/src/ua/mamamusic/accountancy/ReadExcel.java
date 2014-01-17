@@ -132,15 +132,13 @@ public class ReadExcel extends SwingWorker<List, Object> {
 		        	  product.setColumnTrack(cell.getContents());
 		          }else if(i == columnPrice){
 		        	  product.setColumnPrice(cell.getContents());
-		          }else if(i == columnQuantity){
+		          }else if(columnQuantity >= 0 && i == columnQuantity){
 		        	  product.setColumnQuantity(cell.getContents());
-		          }else if(i == columnTrackType){
+		          }else if(columnTrackType >= 0 && i == columnTrackType){
 		        	  product.setColumnTrackType(cell.getContents());
 		          }else if(i == columnRelatedIncome && incomeType == 1){
 		        	  product.setColumnRelatedIncome(cell.getContents());
 		          }
-		          
-		          //array[i] = cell.getContents();
 
 		        }
 		        list.add(product);
@@ -156,13 +154,16 @@ public class ReadExcel extends SwingWorker<List, Object> {
 		  List<DataRow> list = putToArray();
 			NumberFormat defForm = NumberFormat.getInstance();
 			Number number;
+			int columnQuantity = dist.getColumnQuantity();
 			
 			for(int i=0; i < list.size(); i++){
 				DataRow row = list.get(i);
 				row.setDistributor(dist);
 			    try {
-			    	number = defForm.parse(row.getColumnQuantity());
-			    	row.setQuantity(number.intValue());
+			    	if(columnQuantity >= 0){
+				    	number = defForm.parse(row.getColumnQuantity());
+				    	row.setQuantity(number.intValue());
+			    	}
 			        
 			        number = defForm.parse(row.getColumnPrice());
 			        row.setIncome(number.doubleValue()); 

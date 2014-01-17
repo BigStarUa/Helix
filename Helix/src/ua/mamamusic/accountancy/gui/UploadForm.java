@@ -117,7 +117,7 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 	private JToolBar toolBar;
 	private JFileChooser fc;
 	private JButton addButton;
-	private JComboBox comboBoxDistributors;
+	private JComboBox<Distributor> comboBoxDistributors;
 	private File file;
 	private JLabel lblFileName;
 	private JButton btnStart;
@@ -539,7 +539,9 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 //			if(row.getArtist() != null){
 //				row.setTrack(matchTrack(row.getArtist(), row.getColumnTrack()));
 //			}
-			row.setType(matchType(row.getColumnTrackType()));
+			if(((Distributor)comboBoxDistributors.getSelectedItem()).getColumnTrackType() >= 0){
+				row.setType(matchType(row.getColumnTrackType()));
+			}
 		}
 		table.repaint();
 		table.revalidate();
