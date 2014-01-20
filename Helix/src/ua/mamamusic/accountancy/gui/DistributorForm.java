@@ -41,6 +41,7 @@ import ua.mamamusic.accountancy.IconFactory;
 import ua.mamamusic.accountancy.model.Distributor;
 import ua.mamamusic.accountancy.model.DistributorAlias;
 import ua.mamamusic.accountancy.model.GenericListModel;
+import ua.mamamusic.accountancy.model.ReportPeriod;
 import ua.mamamusic.accountancy.session.DistributorManager;
 import ua.mamamusic.accountancy.session.DistributorManagerImpl;
 
@@ -87,6 +88,7 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 	private JLabel lblTotal;
 	private JLabel lblRelatedColumn;
 	private JComboBox<String> comboBoxIncome;
+	private JComboBox<ReportPeriod> comboBoxReportPeriod;
 
 	public DistributorForm(Window owner, String title, ModalityType modalityType, Distributor distributor, DistributorsListListener listener) {
 		super(owner, title, modalityType);
@@ -100,6 +102,8 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 
 	private void populateForm(){		
 		txtName.setText(distributor.getName());
+		comboBoxReportPeriod.setModel(new DefaultComboBoxModel<>(new ReportPeriod[] {ReportPeriod.MONTH, ReportPeriod.QUARTER}));
+		
 		if(distributor != null && distributor.getId() > 0){
 			lblProductname.setText(distributor.getName());
 			txtColumnCount.setText(String.valueOf(distributor.getColumnCount() + 1));
@@ -114,9 +118,24 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 			txtRelatedColumn.setText(String.valueOf(distributor.getColumnRelatedIncome() + 1));
 			comboBoxIncome.setSelectedIndex(distributor.getColumnIncomeType());
 			repaintIncomeGroup();
-			
-			model = new GenericListModel<>(new ArrayList<>(distributor.getAliasSet()));
+			if(distributor.getAliasSet() != null){
+				model = new GenericListModel<>(new ArrayList<>(distributor.getAliasSet()));
+			}else{
+				model = new GenericListModel<>(new ArrayList<DistributorAlias>());
+			}
 			aliasList.setModel(model);;
+			
+			comboBoxReportPeriod.setSelectedItem(distributor.getReportPeriod());;
+//			if(distributor.getReportPeriod() != null){
+//				switch(distributor.getReportPeriod()){
+//				case MONTH:
+//					comboBoxReportPeriod.setSelectedIndex(0);
+//					break;
+//				case QUARTER:
+//					comboBoxReportPeriod.setSelectedIndex(1);
+//					break;
+//				}
+//			}
 			
 		}else{
 			lblProductname.setText("New Distributor");
@@ -174,17 +193,27 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 					tabbedPane.addTab("Main", null, panelMain, null);
 					panelMain.setLayout(null);
 					
-					JLabel lblName = new JLabel("Name");
+					JLabel lblName = new JLabel("Name:");
 					lblName.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					lblName.setBounds(10, 27, 46, 14);
+					lblName.setBounds(10, 27, 59, 14);
 					panelMain.add(lblName);
 				
 					
 					txtName = new JTextField();
 					txtName.setFont(new Font("Tahoma", Font.PLAIN, 14));
-					txtName.setBounds(119, 22, 191, 25);
+					txtName.setBounds(129, 22, 191, 25);
 					panelMain.add(txtName);
 					txtName.setColumns(10);
+					
+					JLabel lblReportPeriod = new JLabel("Report period:");
+					lblReportPeriod.setFont(new Font("Tahoma", Font.PLAIN, 16));
+					lblReportPeriod.setBounds(10, 72, 110, 25);
+					panelMain.add(lblReportPeriod);
+					
+					comboBoxReportPeriod = new JComboBox<ReportPeriod>();
+					comboBoxReportPeriod.setFont(new Font("Tahoma", Font.PLAIN, 14));
+					comboBoxReportPeriod.setBounds(129, 72, 191, 24);
+					panelMain.add(comboBoxReportPeriod);
 				}
 				{
 					JPanel panelAlias = new JPanel();
@@ -422,9 +451,18 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 						if(txtName.getText() == ""){
 							JOptionPane.showMessageDialog(null, "You can't save empty name");
 						}else{
-							pushDataToProduct();
-							listener.saveDistributor(distributor);
-							dispose();
+							try {
+								pushDataToProduct();
+								listener.saveDistributor(distributor);
+								dispose();
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(DistributorForm.this,
+									    "Something goes wrong. Please check form data for correctness.",
+									    "Warning",
+									    JOptionPane.WARNING_MESSAGE);
+								e.printStackTrace();
+							}
+							
 						}
 					}
 				});
@@ -445,8 +483,7 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 		}
 	}
 	
-	private void pushDataToProduct(){
-		try{
+	private void pushDataToProduct() throws Exception{
 			distributor.setName(txtName.getText());
 			distributor.setColumnCount(Integer.valueOf(txtColumnCount.getText()) - 1);
 			distributor.setColumnPrice(Integer.valueOf(txtColumnPrice.getText()) - 1);
@@ -458,6 +495,9 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 			distributor.setRelatedRights(Integer.valueOf(txtRelated.getText()));
 			distributor.setColumnIncomeType(comboBoxIncome.getSelectedIndex());
 			
+			if(comboBoxReportPeriod.getSelectedItem() == null) throw new Exception();
+			distributor.setReportPeriod(comboBoxReportPeriod.getItemAt(comboBoxReportPeriod.getSelectedIndex()));
+			
 			if(comboBoxIncome.getSelectedIndex() == 1){
 				distributor.setColumnRelatedIncome(Integer.parseInt(txtRelatedColumn.getText()) - 1);
 			}
@@ -465,9 +505,6 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 			Set<DistributorAlias> set = new HashSet<DistributorAlias>();
 			set.addAll(model.getList());
 			distributor.setAliasSet(set);
-		}catch(Exception e){
-			
-		}
 	
 	}
 

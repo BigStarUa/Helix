@@ -62,6 +62,7 @@ import ua.mamamusic.accountancy.model.ArtistAlias;
 import ua.mamamusic.accountancy.model.DataRow;
 import ua.mamamusic.accountancy.model.Distributor;
 import ua.mamamusic.accountancy.model.ProductRow;
+import ua.mamamusic.accountancy.model.ReportPeriod;
 import ua.mamamusic.accountancy.model.TRight;
 import ua.mamamusic.accountancy.model.TRightType;
 import ua.mamamusic.accountancy.model.Track;
@@ -141,6 +142,7 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 	private Box horizontalBox;
 	private Box horizontalBox_1;
 	private JComboBox comboBoxRightType;
+	private JLabel lblRights;
 	private enum MonthDay {FIRST, LAST}
 
 	public UploadForm(){
@@ -212,6 +214,7 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 		
 		
 		panel_4 = new JPanel();
+		panel_4.setMaximumSize(new Dimension(400, 32767));
 		toolBar.add(panel_4);
 		AbstractFormatter ab = new AbstractFormatter() {
 			@Override
@@ -237,7 +240,7 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 		
 		
 		
-		lblDate = new JLabel("Date:");
+		lblDate = new JLabel("Date:          ");
 		horizontalBox.add(lblDate);
 		
 		
@@ -255,7 +258,7 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 				horizontalBox_1 = Box.createHorizontalBox();
 				panel_4.add(horizontalBox_1);
 				
-				JLabel lblDistributor_1 = new JLabel("Distributor:");
+				JLabel lblDistributor_1 = new JLabel("Distributor: ");
 				horizontalBox_1.add(lblDistributor_1);
 				
 				
@@ -269,6 +272,9 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 				
 				Box horizontalBox_2 = Box.createHorizontalBox();
 				panel_4.add(horizontalBox_2);
+				
+				lblRights = new JLabel("Rights:        ");
+				horizontalBox_2.add(lblRights);
 				
 				comboBoxRightType = new JComboBox();
 				comboBoxRightType.setModel(new DefaultComboBoxModel(new String[] {"Total (Combined)", "Author right", "Related right"}));
@@ -337,10 +343,25 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 				Date date = ((Calendar)datePanel.getModel().getValue()).getTime();
 				ProductRowManager drm = new ProductRowManagerImpl();
 				
-				Date start = getFirstDateOfCurrentMonth(date, MonthDay.FIRST);
-				Date end = getFirstDateOfCurrentMonth(date, MonthDay.LAST);
 				Distributor dist = (Distributor) comboBoxDistributors.getSelectedItem();
-				List<ProductRow> existingList = drm.loadAllDataRowsByPeriod(start, end, dist);
+				Date start = getFirstDateOfCurrentMonth(date, MonthDay.FIRST, dist);
+				Date end = getFirstDateOfCurrentMonth(date, MonthDay.LAST, dist);
+				TRightType rightType = null;
+				System.out.println(start);
+				System.out.println(end);
+				switch(comboBoxRightType.getSelectedIndex()){
+				case 0:
+					rightType = null;
+					break;
+				case 1:
+					rightType = TRightType.AUTHOR;
+					break;
+				case 2:
+					rightType = TRightType.RELATED;
+					break;
+				}
+				
+				List<ProductRow> existingList = drm.loadAllDataRowsByPeriod(start, end, dist, rightType);
 				
 				if(existingList != null && existingList.size() > 0){
 					JOptionPane.showMessageDialog(UploadForm.this,
@@ -400,18 +421,37 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 		return uploadList;
 	}
 	
-	private Date getFirstDateOfCurrentMonth(Date date, MonthDay monthDay) {
+	private Date getFirstDateOfCurrentMonth(Date date, MonthDay monthDay, Distributor distributor) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
+		int month = cal.get(Calendar.MONTH);
 		switch(monthDay){
 			case FIRST:
+				if(distributor.getReportPeriod() == ReportPeriod.QUARTER) cal.set(Calendar.MONTH, getFirstLastMonthOfQuarter(monthDay, month));
 				cal.set(Calendar.DAY_OF_MONTH, Calendar.getInstance().getActualMinimum(Calendar.DAY_OF_MONTH));
 				break;
 			case LAST:
-				cal.set(Calendar.DAY_OF_MONTH,Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH));
+				if(distributor.getReportPeriod() == ReportPeriod.QUARTER) cal.set(Calendar.MONTH, getFirstLastMonthOfQuarter(monthDay, month));
+				cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 				break;
 		}
 		return cal.getTime();
+	}
+	
+	private int getFirstLastMonthOfQuarter(MonthDay monthDay, int month){
+		switch(monthDay){
+		case FIRST:
+			return (month >= Calendar.JANUARY && month <= Calendar.MARCH)     ? Calendar.JANUARY :
+			       (month >= Calendar.APRIL && month <= Calendar.JUNE)        ? Calendar.APRIL :
+			       (month >= Calendar.JULY && month <= Calendar.SEPTEMBER)    ? Calendar.JULY :
+			    	   Calendar.OCTOBER;
+		case LAST:
+			return (month >= Calendar.JANUARY && month <= Calendar.MARCH)     ? Calendar.MARCH :
+			       (month >= Calendar.APRIL && month <= Calendar.JUNE)        ? Calendar.JUNE :
+			       (month >= Calendar.JULY && month <= Calendar.SEPTEMBER)    ? Calendar.SEPTEMBER :
+			    	   Calendar.DECEMBER;
+		}
+		return 0;
 	}
 
 	private JToolBar getToolBar() {

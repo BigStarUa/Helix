@@ -80,7 +80,7 @@ public class ArtistAliasForm extends JDialog {
 			flowLayout.setAlignment(FlowLayout.LEADING);
 			contentPanel.add(panel, BorderLayout.NORTH);
 			{
-				JLabel lblDistributor = new JLabel("Distributor:");
+				JLabel lblDistributor = new JLabel("Artist:");
 				lblDistributor.setFont(new Font("Tahoma", Font.PLAIN, 14));
 				panel.add(lblDistributor);
 			}
@@ -101,7 +101,7 @@ public class ArtistAliasForm extends JDialog {
 				flowLayout.setAlignment(FlowLayout.LEADING);
 				panel.add(panel_1);
 				{
-					JLabel lblName = new JLabel("Name:");
+					JLabel lblName = new JLabel("Alias:");
 					lblName.setFont(new Font("Tahoma", Font.PLAIN, 14));
 					panel_1.add(lblName);
 				}
@@ -109,7 +109,6 @@ public class ArtistAliasForm extends JDialog {
 					txtName = new JTextField();
 					txtName.setFont(new Font("Tahoma", Font.PLAIN, 14));
 					panel_1.add(txtName);
-					txtName.setText("name");
 					txtName.setColumns(20);
 				}
 			}
@@ -137,6 +136,12 @@ public class ArtistAliasForm extends JDialog {
 			{
 				JButton cancelButton = new JButton("Cancel", IconFactory.CANCEL_ICON);
 				cancelButton.setActionCommand("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						dispose();
+					}
+				});
 				buttonPane.add(cancelButton);
 			}
 		}

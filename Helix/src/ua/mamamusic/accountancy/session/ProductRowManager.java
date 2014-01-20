@@ -26,7 +26,7 @@ public interface ProductRowManager {
 	
 	public void deleteProductRowList(List<ProductRow> list);
 
-	public List<ProductRow> loadAllDataRowsByPeriod(Date start, Date end, Distributor distributor);
+	public List<ProductRow> loadAllDataRowsByPeriod(Date start, Date end, Distributor distributor, TRightType type);
 	
 	public List<Object[]> loadDataRowsByCriterias(Artist[] artList, Distributor distributor, TrackType type, Date start, Date end, boolean groupDistrib, boolean groupType);
 

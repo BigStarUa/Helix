@@ -39,4 +39,6 @@ public class IconFactory {
 	public static final Icon EXPORT32_ICON = new ImageIcon(IconFactory.class.getResource("icon/export32.png"));
 	public static final Icon OPEN_FILE32_ICON = new ImageIcon(IconFactory.class.getResource("icon/open_file32.png"));
 	public static final Icon START32_ICON = new ImageIcon(IconFactory.class.getResource("icon/start32.png"));
+	public static final Icon TRASH32_ICON = new ImageIcon(IconFactory.class.getResource("icon/trash32.png"));
+	public static final Icon RELOAD32_ICON = new ImageIcon(IconFactory.class.getResource("icon/reload32.png"));
 }

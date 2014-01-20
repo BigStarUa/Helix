@@ -199,7 +199,7 @@ public class MainFrame extends JFrame implements ChangeListener {
 		btnTrash = new JButton();
 		btnTrash.setFocusable(false);
 		btnTrash.setAction(openTrashFormAction);
-		btnTrash.setIcon(IconFactory.CHART32_ICON);
+		btnTrash.setIcon(IconFactory.TRASH32_ICON);
 		toolBar.add(btnTrash);
 		
 		//Create file chooser

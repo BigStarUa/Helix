@@ -198,7 +198,7 @@ public class DistributorsList extends AbstractJPanel implements DistributorsList
 //					    	JOptionPane.showMessageDialog(DistributorsList.this, sb.toString());
 //					    }else{
 						    //pm.deleteProduct((Distributor)model.getValueAt(row, -1));
-						    model.removeProduct(row);
+						    //model.removeProduct(row);
 					    //}
 					}
 				}

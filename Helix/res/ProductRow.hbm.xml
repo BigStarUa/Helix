@@ -15,7 +15,7 @@
 	column="TRACK_ID" lazy="false" fetch="select" not-null="true"></many-to-one>
 	
 	<many-to-one name="type" class="ua.mamamusic.accountancy.model.TrackType"
-	column="TYPE_ID" lazy="false" fetch="select" not-null="true"></many-to-one>
+	column="TYPE_ID" lazy="false" fetch="select" not-null="false"></many-to-one>
 	
 	<many-to-one name="distributor" class="ua.mamamusic.accountancy.model.Distributor"
 	column="DISTRIBUTOR_ID" lazy="false" fetch="select" not-null="true"></many-to-one>

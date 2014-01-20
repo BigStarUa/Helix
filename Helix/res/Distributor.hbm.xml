@@ -22,5 +22,11 @@
 	<property name="relatedRights" column="RELATED_RIGHTS" type="integer"></property>
 	<property name="columnIncomeType" column="COLUMN_INCOME_TYPE" type="integer"></property>
 	<property name="columnRelatedIncome" column="COLUMN_RELATED_INCOME" type="integer"></property>
+
+	<property name="reportPeriod" column="REPORT_PERIOD" not-null="true">
+	  <type name="org.hibernate.type.EnumType">
+	    <param name="enumClass">ua.mamamusic.accountancy.model.ReportPeriod</param>
+	  </type>
+	</property>
 </class>
 </hibernate-mapping>

@@ -81,13 +81,16 @@ public class ProductRowManagerImpl implements ProductRowManager{
 	}
 	
 	@Override
-	public List<ProductRow> loadAllDataRowsByPeriod(Date start, Date end, Distributor distributor) {
+	public List<ProductRow> loadAllDataRowsByPeriod(Date start, Date end, Distributor distributor, TRightType type) {
 		List<ProductRow> list = null;
 		try{
 			HibernateUtil.beginTransaction();
 			Criteria c = HibernateUtil.getSession().createCriteria(ProductRow.class);
 			c.add( Restrictions.between("date", start, end) );
 			c.add( Restrictions.eq("distributor", distributor) );
+			if(type != null){
+				c.add( Restrictions.eq("rightType", type) );
+			}
 			list = c.list();
 			HibernateUtil.commitTransaction();
 		}catch(HibernateException he){

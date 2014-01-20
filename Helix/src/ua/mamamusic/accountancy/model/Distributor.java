@@ -19,6 +19,7 @@ public class Distributor {
 	private int relatedRights;
 	private int columnRelatedIncome;
 	private int columnIncomeType;
+	private ReportPeriod reportPeriod;
 	
 	public long getId() {
 		return id;
@@ -107,6 +108,12 @@ public class Distributor {
 	}
 	public void setColumnRelatedIncome(int columnRelatedIncome) {
 		this.columnRelatedIncome = columnRelatedIncome;
+	}
+	public ReportPeriod getReportPeriod() {
+		return reportPeriod;
+	}
+	public void setReportPeriod(ReportPeriod reportPeriod) {
+		this.reportPeriod = reportPeriod;
 	}
 	
 	
