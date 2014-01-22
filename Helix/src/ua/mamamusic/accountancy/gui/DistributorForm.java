@@ -503,7 +503,9 @@ public class DistributorForm extends AbstractJDialog implements DistributerAlias
 			}
 			
 			Set<DistributorAlias> set = new HashSet<DistributorAlias>();
-			set.addAll(model.getList());
+			if(model != null){
+				set.addAll(model.getList());
+			}
 			distributor.setAliasSet(set);
 	
 	}

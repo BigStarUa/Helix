@@ -41,6 +41,7 @@ import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
 public class TRightForm extends JDialog {
 
@@ -160,7 +161,9 @@ public class TRightForm extends JDialog {
 				}
 				{
 					comboBox = new JComboBox<Artist>();
-					comboBox.setBounds(90, 6, 220, 20);
+					comboBox.setFont(new Font("Tahoma", Font.PLAIN, 14));
+					comboBox.setMinimumSize(new Dimension(28, 24));
+					comboBox.setBounds(90, 6, 220, 25);
 					panel_1.add(comboBox);
 				}
 				

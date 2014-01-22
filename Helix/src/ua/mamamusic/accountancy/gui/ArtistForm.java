@@ -265,9 +265,9 @@ public class ArtistForm extends AbstractJDialog implements ArtistAliasListListen
 					btnAddTrack.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent arg0) {
-							TrackForm dialog = new TrackForm(ArtistForm.this.getOwner(), "", new Track(), ArtistForm.this);
-							dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-							dialog.setVisible(true);
+//							TrackForm dialog = new TrackForm(ArtistForm.this.getOwner(), "", new Track(), ArtistForm.this);
+//							dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//							dialog.setVisible(true);
 						}
 					});
 					toolBarTrack.add(btnAddTrack);

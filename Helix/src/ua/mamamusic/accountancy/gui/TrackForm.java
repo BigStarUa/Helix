@@ -320,9 +320,18 @@ public class TrackForm extends AbstractJDialog implements TracksAliasListListene
 				okButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						pushDataToProduct();
-						listener.saveTrack(track);
-						dispose();
+						try {
+							pushDataToProduct();
+							listener.saveTrack(track);
+							dispose();
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(TrackForm.this,
+								    "Something goes wrong. Please check form data for correctness.",
+								    "Warning",
+								    JOptionPane.WARNING_MESSAGE);
+							e.printStackTrace();
+						}
+
 					}
 				});
 				buttonPane.add(okButton);
@@ -342,8 +351,8 @@ public class TrackForm extends AbstractJDialog implements TracksAliasListListene
 		}
 	}
 	
-	private void pushDataToProduct(){
-		try{
+	private void pushDataToProduct() throws Exception{
+		if(txtName.getText().equals("")) throw new Exception();
 			track.setName(txtName.getText());
 			
 			Set<TrackAlias> set = new HashSet<TrackAlias>();
@@ -353,9 +362,6 @@ public class TrackForm extends AbstractJDialog implements TracksAliasListListene
 			Set<TRight> rightSet = new HashSet<TRight>();
 			rightSet.addAll(rModel.getList());
 			track.setRightSet(rightSet);
-		}catch(Exception e){
-			
-		}
 	}
 
 	@Override
@@ -375,4 +381,5 @@ public class TrackForm extends AbstractJDialog implements TracksAliasListListene
 			rModel.addOrUpdateRight(right);
 		}
 	}
+	
 }

@@ -17,6 +17,7 @@ import java.util.TreeSet;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListModel;
 import javax.swing.border.EmptyBorder;
@@ -32,6 +33,7 @@ import ua.mamamusic.accountancy.model.DataRow;
 import ua.mamamusic.accountancy.model.GenericListModel;
 import ua.mamamusic.accountancy.model.GenericListModelFilter;
 import ua.mamamusic.accountancy.model.GenericListRenderer;
+import ua.mamamusic.accountancy.model.TRight;
 import ua.mamamusic.accountancy.model.Track;
 import ua.mamamusic.accountancy.model.TrackAlias;
 import ua.mamamusic.accountancy.session.ArtistManager;
@@ -136,7 +138,16 @@ public class AddTrackAlias extends JDialog implements TracksListListener{
 					btnAdd.addActionListener(new ActionListener(){
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							JDialog trackForm = new TrackForm(AddTrackAlias.this,"Add Track", new Track(), AddTrackAlias.this);
+							Track track = new Track();
+							track.setName(aliasName);
+							
+							TRight right = new TRight();
+							right.setArtist(artist);
+							right.setAuthor(100);
+							right.setRelated(100);
+							
+							TrackForm trackForm = new TrackForm(AddTrackAlias.this,"Add Track", track, AddTrackAlias.this);
+							trackForm.saveRight(right);
 							trackForm.setVisible(true);
 						}
 					});
@@ -188,9 +199,17 @@ public class AddTrackAlias extends JDialog implements TracksListListener{
 						Track selectedTrack = list.getSelectedValue();
 						
 						if(selectedTrack != null){
-							save(selectedTrack);
-							listener.fireTableChanged();
-							dispose();
+							try {
+								save(selectedTrack);
+								listener.fireTableChanged();
+								dispose();
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(AddTrackAlias.this,
+									    "Something goes wrong.",
+									    "Warning",
+									    JOptionPane.WARNING_MESSAGE);
+								e.printStackTrace();
+							}
 						}
 					}
 				});
@@ -209,10 +228,11 @@ public class AddTrackAlias extends JDialog implements TracksListListener{
 		}
 	}
 
-	private void save(Track track){
+	private void save(Track track) throws Exception{
 		TrackAlias alias = new TrackAlias();
 		alias.setTrack(track);
-		alias.setName(txtAlias.getText());
+		if(txtAlias.getText().trim().equals("")) throw new Exception();
+		alias.setName(txtAlias.getText().trim());
 		
 		if(track.getAliasSet() != null){
 			track.getAliasSet().add(alias);
@@ -230,21 +250,12 @@ public class AddTrackAlias extends JDialog implements TracksListListener{
 	
 	@Override
 	public void saveTrack(Track track) {
-//		if(track != null && track.getId() < 1){
-//			track.setArtist(artist);
-//			
-//			if(artist.getTrackSet() != null){
-//				artist.getTrackSet().add(track);
-//			}else{
-//				Set<Track> set = new HashSet<Track>();
-//				set.add(track);
-//				artist.setTrackSet(set);
-//			}
-//			
-//			ArtistManager am = new ArtistManagerImpl();
-//			am.updateArtist(artist);
-//			
-//			((GenericListModelFilter<Track>) list.getModel()).addElement(track);
-//		}
+		if(track != null){
+			
+			TrackManager tm = new TrackManagerImpl();
+			tm.saveNewTrack(track);
+
+			((GenericListModelFilter<Track>) list.getModel()).addElement(track);
+		}
 	}
 }

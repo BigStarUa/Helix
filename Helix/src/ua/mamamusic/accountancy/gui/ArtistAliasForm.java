@@ -148,7 +148,7 @@ public class ArtistAliasForm extends JDialog {
 	}
 	
 	private void fillAlias(){
-		alias.setName(txtName.getText());
+		alias.setName(txtName.getText().trim());
 	}
 
 }

@@ -29,6 +29,7 @@ import ua.mamamusic.accountancy.session.TrackTypeManager;
 import ua.mamamusic.accountancy.session.TrackTypeManagerImpl;
 
 import javax.swing.AbstractButton;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JOptionPane;
@@ -36,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.JList;
 import javax.swing.BoxLayout;
+import javax.swing.ListSelectionModel;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -59,6 +61,8 @@ import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableModel;
@@ -122,6 +126,31 @@ public class ReportForm extends AbstractJPanel {
 		typeList = new ArrayList<TrackType>(ttm.loadAllTrackTypesOrderedBy("name"));
 		
 		list.setModel(new GenericListModel<Artist>(artistList));
+		list.setSelectionModel(new DefaultListSelectionModel(){
+		    private static final long serialVersionUID = 1L;
+
+		    boolean gestureStarted = false;
+
+		    @Override
+		    public void setSelectionInterval(int index0, int index1) {
+		        if(!gestureStarted){
+		            if (isSelectedIndex(index0)) {
+		                super.removeSelectionInterval(index0, index1);
+		            } else {
+		                super.addSelectionInterval(index0, index1);
+		            }
+		        }
+		        gestureStarted = true;
+		    }
+
+		    @Override
+		    public void setValueIsAdjusting(boolean isAdjusting) {
+		        if (isAdjusting == false) {
+		            gestureStarted = false;
+		        }
+		    }
+
+		});
 		
 		Distributor fakeDistrib = new Distributor();
 		fakeDistrib.setName("Select all");
@@ -142,7 +171,7 @@ public class ReportForm extends AbstractJPanel {
 	}
 	
 	private void build() {
-		setBounds(100, 100, 650, 610);
+		setBounds(100, 100, 650, 640);
 		setLayout(new BorderLayout());
 		contentPanel.setBackground(Color.WHITE);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -159,23 +188,57 @@ public class ReportForm extends AbstractJPanel {
 			contentPanel.add(panel, BorderLayout.WEST);
 			panel.setLayout(null);
 			
+			JPanel panel_5 = new JPanel();
+			panel_5.setBackground(Color.WHITE);
+			panel_5.setBorder(new TitledBorder(null, "Artist", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			panel_5.setBounds(10, 11, 230, 211);
+			panel.add(panel_5);
+			panel_5.setLayout(new BorderLayout(0, 0));
+			
 			list = new JList<Artist>();
+			list.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			list.setBorder(null);
 			list.setBounds(10, 11, 230, 187);
 			
 			JScrollPane scrollPane = new JScrollPane();
 			scrollPane.setBackground(Color.WHITE);
-			scrollPane.setBorder(new TitledBorder(null, "Artists", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			scrollPane.setLocation(10, 11);
-			scrollPane.setSize(230, 182);
+			scrollPane.setLocation(79, 11);
+			scrollPane.setSize(161, 136);
 			scrollPane.setViewportView(list);
 			
-			panel.add(scrollPane);
+			panel_5.add(scrollPane);
+			
+			JToolBar toolBar = new JToolBar();
+			toolBar.setFloatable(false);
+			toolBar.setBackground(Color.WHITE);
+			panel_5.add(toolBar, BorderLayout.NORTH);
+			
+			JButton btnSelectall = new JButton("SelectAll");
+			btnSelectall.setFocusable(false);
+			btnSelectall.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					list.setSelectionInterval(0, list.getModel().getSize()-1);
+				}
+			});
+			toolBar.add(btnSelectall);
+			
+			JButton btnDeselectall = new JButton("DeselectAll");
+			btnDeselectall.setFocusable(false);
+			btnDeselectall.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					list.clearSelection();
+				}
+			});
+			toolBar.add(btnDeselectall);
 			
 			JPanel panel_1 = new JPanel();
 			panel_1.setBackground(Color.WHITE);
 			panel_1.setBorder(new TitledBorder(null, "Distributor", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panel_1.setBounds(10, 204, 230, 46);
+			panel_1.setBounds(10, 233, 230, 46);
 			panel.add(panel_1);
 			panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.X_AXIS));
 			
@@ -202,7 +265,7 @@ public class ReportForm extends AbstractJPanel {
 			JPanel panel_4 = new JPanel();
 			panel_4.setBackground(Color.WHITE);
 			panel_4.setBorder(new TitledBorder(null, "Type", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panel_4.setBounds(10, 261, 230, 46);
+			panel_4.setBounds(10, 290, 230, 46);
 			panel.add(panel_4);
 			panel_4.setLayout(new BoxLayout(panel_4, BoxLayout.X_AXIS));
 			
@@ -229,7 +292,7 @@ public class ReportForm extends AbstractJPanel {
 			JPanel panel_2 = new JPanel();
 			panel_2.setBackground(Color.WHITE);
 			panel_2.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Date", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panel_2.setBounds(10, 318, 230, 102);
+			panel_2.setBounds(10, 347, 230, 102);
 			panel.add(panel_2);
 			
 			
@@ -288,7 +351,7 @@ public class ReportForm extends AbstractJPanel {
 			horizontalBox_1.add((Component)dateEnd);
 			
 			JButton btnGetData = new JButton("Get data", IconFactory.TABLES32_ICON);
-			btnGetData.setBounds(58, 488, 117, 35);
+			btnGetData.setBounds(58, 517, 117, 35);
 			btnGetData.addActionListener(new ActionListener() {	
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -370,7 +433,7 @@ public class ReportForm extends AbstractJPanel {
 			JPanel panel_3 = new JPanel();
 			panel_3.setBackground(Color.WHITE);
 			panel_3.setBorder(new TitledBorder(null, "Rights", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panel_3.setBounds(10, 431, 230, 46);
+			panel_3.setBounds(10, 460, 230, 46);
 			panel.add(panel_3);
 			panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
 			

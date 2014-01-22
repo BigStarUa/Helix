@@ -18,6 +18,7 @@ import java.util.TreeSet;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
@@ -158,9 +159,17 @@ public class AddArtistAlias extends JDialog{
 						Artist selectedArtist = list.getSelectedValue();
 						
 						if(selectedArtist != null){
-							save(selectedArtist);
-							listener.fireTableChanged();
-							dispose();
+							try {
+								save(selectedArtist);
+								listener.fireTableChanged();
+								dispose();
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(AddArtistAlias.this,
+									    "Something goes wrong.",
+									    "Warning",
+									    JOptionPane.WARNING_MESSAGE);
+								e.printStackTrace();
+							}
 						}
 					}
 				});
@@ -179,10 +188,12 @@ public class AddArtistAlias extends JDialog{
 		}
 	}
 
-	private void save(Artist artist){
+	private void save(Artist artist)throws Exception{
+		if(txtAlias.getText().trim().equals("")) throw new Exception();
+		
 		ArtistAlias alias = new ArtistAlias();
 		alias.setArtist(artist);
-		alias.setName(txtAlias.getText());
+		alias.setName(txtAlias.getText().trim());
 		
 		if(artist.getAliasSet() != null){
 			artist.getAliasSet().add(alias);

@@ -96,7 +96,7 @@ public class TrackTypeForm extends AbstractJDialog implements TrackTypeAliasList
 	}
 
 	private void populateForm(){
-		if(type != null && type.getId() > 0){
+		if(type != null){
 			lblProductname.setText(type.getName());
 			txtName.setText(type.getName());
 			
@@ -183,6 +183,7 @@ public class TrackTypeForm extends AbstractJDialog implements TrackTypeAliasList
 		panel_2.setLayout(new BorderLayout(0, 0));
 		
 		aliasList = new JList();
+		aliasList.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		aliasList.setBorder(new MatteBorder(1, 0, 0, 0, (Color) Color.LIGHT_GRAY));
 		aliasList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listSelectionModel = aliasList.getSelectionModel();

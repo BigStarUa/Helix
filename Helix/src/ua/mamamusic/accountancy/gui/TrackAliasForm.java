@@ -8,6 +8,7 @@ import java.awt.Window;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
@@ -111,7 +112,6 @@ public class TrackAliasForm extends JDialog {
 					txtName = new JTextField();
 					txtName.setFont(new Font("Tahoma", Font.PLAIN, 14));
 					panel_1.add(txtName);
-					txtName.setText("name");
 					txtName.setColumns(20);
 				}
 			}
@@ -127,9 +127,17 @@ public class TrackAliasForm extends JDialog {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						if(listener != null && alias != null){
-							fillAlias();
-							listener.saveTrackAlias(alias);
-							TrackAliasForm.this.dispose();
+							try {
+								fillAlias();
+								listener.saveTrackAlias(alias);
+								dispose();
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(TrackAliasForm.this,
+									    "Something goes wrong.",
+									    "Warning",
+									    JOptionPane.WARNING_MESSAGE);
+								e.printStackTrace();
+							}
 						}
 					}
 				});
@@ -139,13 +147,20 @@ public class TrackAliasForm extends JDialog {
 			{
 				JButton cancelButton = new JButton("Cancel", IconFactory.CANCEL_ICON);
 				cancelButton.setActionCommand("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						dispose();
+					}
+				});
 				buttonPane.add(cancelButton);
 			}
 		}
 	}
 	
-	private void fillAlias(){
-		alias.setName(txtName.getText());
+	private void fillAlias()throws Exception{
+		if(txtName.getText().trim().equals("")) throw new Exception();
+		alias.setName(txtName.getText().trim());
 	}
 
 }
