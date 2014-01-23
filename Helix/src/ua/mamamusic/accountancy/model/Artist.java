@@ -8,6 +8,8 @@ public class Artist implements Comparable<Artist>{
 	private String name;
 	private Set<ArtistAlias> aliasSet;
 	private Set<Track> trackSet;
+	private int incomePercent;
+	
 	public long getId() {
 		return id;
 	}
@@ -38,6 +40,12 @@ public class Artist implements Comparable<Artist>{
 	@Override
 	public int compareTo(Artist artist) {
 		return name.compareTo(artist.getName());
+	}
+	public int getIncomePercent() {
+		return incomePercent;
+	}
+	public void setIncomePercent(int incomePercent) {
+		this.incomePercent = incomePercent;
 	}
 	
 	
