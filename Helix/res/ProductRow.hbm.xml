@@ -20,7 +20,7 @@
 	<many-to-one name="distributor" class="ua.mamamusic.accountancy.model.Distributor"
 	column="DISTRIBUTOR_ID" lazy="false" fetch="select" not-null="true"></many-to-one>
      
-    <property name="quantity" column="QUANTITY" type="integer"></property>
+    <property name="quantity" column="QUANTITY" type="long"></property>
     <property name="income" column="INCOME" type="double"></property>
     <property name="date" column="DATE" type="date"></property>
     

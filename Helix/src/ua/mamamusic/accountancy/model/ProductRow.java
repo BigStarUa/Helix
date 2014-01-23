@@ -2,18 +2,22 @@ package ua.mamamusic.accountancy.model;
 
 import java.util.Date;
 
+import ua.mamamusic.accountancy.gui.UploadForm;
+
 public class ProductRow {
 
 	private long id;
 	private Track track;
 	private Artist artist;
 	private TrackType type;
-	private int quantity;
+	private long quantity;
 	private Double income;
 	private Date date;
 	private Distributor distributor;
 	private TRightType rightType;
 	private int rightPercent;
+	private double artistIncome;
+	private double companyIncome;
 	
 	public long getId() {
 		return id;
@@ -39,10 +43,10 @@ public class ProductRow {
 	public void setType(TrackType type) {
 		this.type = type;
 	}
-	public int getQuantity() {
+	public long getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(int quantity) {
+	public void setQuantity(long quantity) {
 		this.quantity = quantity;
 	}
 	public Double getIncome() {
@@ -50,6 +54,8 @@ public class ProductRow {
 	}
 	public void setIncome(Double income) {
 		this.income = income;
+		artistIncome = UploadForm.round(((double)artist.getIncomePercent() / 100) * income, 2);
+		companyIncome = income - artistIncome;
 	}
 	public Date getDate() {
 		return date;
@@ -75,6 +81,11 @@ public class ProductRow {
 	public void setRightPercent(int rightPercent) {
 		this.rightPercent = rightPercent;
 	}
-	
+	public double getArtistIncome(){
+		return artistIncome;
+	}
+	public double getCompanyIncome(){
+		return companyIncome;
+	}
 	
 }

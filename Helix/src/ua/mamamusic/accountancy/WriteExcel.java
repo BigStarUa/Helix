@@ -89,28 +89,35 @@ public class WriteExcel {
 	      RowsExceededException {
 	    // Write a few number
 		  TableModel model = table.getModel();
-		  Object[] row;
-	    for (int i = 0; i < model.getRowCount(); i++) {
-	    	row = (Object[])model.getValueAt(i, -1);
+		  String row;
+	    for (int i = 0; i < table.getRowCount(); i++) {
+	    	//row = (String)table.getValueAt(i, -1);
 	    	
-	    	for(int n = 0;n < row.length; n++){
-	    		addCellFromObject(sheet, n, i, row[n]);
+	    	for(int n = 0;n < table.getColumnCount(); n++){
+	    		addCellFromObject(sheet, n, i, table.getValueAt(i, n));
 	    	}
 	    }
 
 	  }
 	  
 	  private void addCellFromObject(WritableSheet sheet, int column, int row, Object object) throws RowsExceededException, WriteException{
-			if(object instanceof Artist){
-				addLabel(sheet, column, row, object.toString());
-			}else if(object instanceof Track){
-				addLabel(sheet, column, row, object.toString());
-			}else if(object instanceof Distributor){
-				addLabel(sheet, column, row, object.toString());
-			}else if(object instanceof Double){
-				addNumber(sheet, column, row, (Double)object);
-			}else if(object instanceof Long){
-				addNumber(sheet, column, row, (Long)object);
+		  if(table.getColumnName(column) == "Quantity"){
+			  addNumber(sheet, column, row, (Long)object);
+		  }else if(table.getColumnName(column) == "Income"
+				  || table.getColumnName(column) == "Artist income"
+				  || table.getColumnName(column) == "Company income"){
+			  addNumber(sheet, column, row, (Double)object);
+			  
+		  //			if(object instanceof Artist){
+//				addLabel(sheet, column, row, object.toString());
+//			}else if(object instanceof Track){
+//				addLabel(sheet, column, row, object.toString());
+//			}else if(object instanceof Distributor){
+//				addLabel(sheet, column, row, object.toString());
+//			}else if(object instanceof Double){
+//				addNumber(sheet, column, row, (Double)object);
+//			}else if(object instanceof Long){
+//				addNumber(sheet, column, row, (Long)object);
 			}else{
 				addLabel(sheet, column, row, object.toString());
 			}

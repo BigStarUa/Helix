@@ -12,6 +12,8 @@ import ua.mamamusic.accountancy.IconFactory;
 import ua.mamamusic.accountancy.WriteExcel;
 import ua.mamamusic.accountancy.model.Artist;
 import ua.mamamusic.accountancy.model.Distributor;
+import ua.mamamusic.accountancy.model.ExternalReportTableCellRenderer;
+import ua.mamamusic.accountancy.model.ExternalReportTableModel;
 import ua.mamamusic.accountancy.model.GenericComboBoxModel;
 import ua.mamamusic.accountancy.model.GenericListModel;
 import ua.mamamusic.accountancy.model.ProductRow;
@@ -214,6 +216,7 @@ public class ReportForm extends AbstractJPanel {
 			panel_5.add(toolBar, BorderLayout.NORTH);
 			
 			JButton btnSelectall = new JButton(IconFactory.CHECKBOX_CHECKED16_ICON);
+			btnSelectall.setBackground(Color.WHITE);
 			btnSelectall.setFocusable(false);
 			btnSelectall.addActionListener(new ActionListener() {
 				
@@ -225,6 +228,7 @@ public class ReportForm extends AbstractJPanel {
 			toolBar.add(btnSelectall);
 			
 			JButton btnDeselectall = new JButton(IconFactory.CHECKBOX_UNCHECKED16_ICON);
+			btnDeselectall.setBackground(Color.WHITE);
 			btnDeselectall.setFocusable(false);
 			btnDeselectall.addActionListener(new ActionListener() {
 				
@@ -350,8 +354,8 @@ public class ReportForm extends AbstractJPanel {
 			dateEnd = new JDatePickerImpl(pan2, ab);
 			horizontalBox_1.add((Component)dateEnd);
 			
-			JButton btnGetData = new JButton("Get data", IconFactory.TABLES32_ICON);
-			btnGetData.setBounds(58, 517, 117, 35);
+			JButton btnGetData = new JButton("Report", IconFactory.TABLES32_ICON);
+			btnGetData.setBounds(139, 517, 101, 35);
 			btnGetData.addActionListener(new ActionListener() {	
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -376,7 +380,7 @@ public class ReportForm extends AbstractJPanel {
 							if(typeComboBox.getSelectedItem() != null && typeComboBox.getSelectedIndex() > 0){
 								type = (TrackType) typeComboBox.getSelectedItem();
 							}
-							columnNameList.add("TrackType");
+							columnNameList.add("Type");
 						}
 						if(chckbxGroupDistrib.isSelected()){
 							if(distributorComboBox.getSelectedItem() != null && distributorComboBox.getSelectedIndex() > 0){
@@ -406,16 +410,17 @@ public class ReportForm extends AbstractJPanel {
 						
 						ProductRowManager drm = new ProductRowManagerImpl();
 						//List<Object[]> dataRowList = drm.loadDataRowsByCriterias(array, distr, type, start, end, chckbxGroupDistrib.isSelected(), chckbxGroupType.isSelected());
-						List<Object[]> dataRowList = drm.loadData(array, distr, type, start, end, chckbxGroupDistrib.isSelected(), chckbxGroupType.isSelected(), chckbxGroupDate.isSelected(), chckbxGroupRights.isSelected(), rightType);
+						List<ProductRow> dataRowList = drm.loadData(array, distr, type, start, end, chckbxGroupDistrib.isSelected(), chckbxGroupType.isSelected(), chckbxGroupDate.isSelected(), chckbxGroupRights.isSelected(), rightType);
 						//List<ProductRow> dataRowList = drm.loadAllDataRowsByPeriod(start, end, distr);
 						
-						TableModel model = new ReportTableModel(columnNameList, dataRowList);
+						TableModel model = new ExternalReportTableModel(dataRowList, columnNameList );
 						table.setModel(model);
+						table.setDefaultRenderer(Object.class, new ExternalReportTableCellRenderer());
 						
-						int incomeColumnIndex = columnNameList.indexOf(incomeString);
+						//int incomeColumnIndex = columnNameList.indexOf(incomeString);
 						double sum = 0;
 						for(int i = 0; i < model.getRowCount(); i++){
-							sum += (double)dataRowList.get(i)[incomeColumnIndex];
+							sum += dataRowList.get(i).getIncome();
 						}
 						lblTotalsum.setText(String.format("%1$,.2f", sum));
 						
@@ -457,6 +462,58 @@ public class ReportForm extends AbstractJPanel {
 			comboBoxRights.setModel(new DefaultComboBoxModel(new String[] {"Select all", "Author", "Related"}));
 			comboBoxRights.setEnabled(false);
 			panel_3.add(comboBoxRights);
+			
+			JButton btnExternalReport = new JButton("External report");
+			btnExternalReport.setBounds(10, 517, 105, 35);
+			btnExternalReport.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					ProductRowManager drm = new ProductRowManagerImpl();
+					List<Artist> artList = list.getSelectedValuesList();
+					Distributor distr = null;
+					Artist[] array = artList.toArray(new Artist[artList.size()]);
+					Date start = ((Calendar)dateStart.getModel().getValue()).getTime();
+					Date end = ((Calendar)dateEnd.getModel().getValue()).getTime();
+					
+					List<ProductRow> dataRowList = drm.loadDataForExternalReport(array, distr, start, end);
+					
+					List<ProductRow> quantityRowList = drm.loadQuantityForExternalReport(array, distr, start, end);
+					
+					for(ProductRow prod : dataRowList){
+						
+						for(ProductRow quantity : quantityRowList){
+							if(prod.getTrack().getId() == quantity.getTrack().getId() && prod.getType().getId() == quantity.getType().getId()){
+								prod.setQuantity(quantity.getQuantity());
+							}
+						}
+						
+					}
+					
+					
+					List<String> columnTitleList = new ArrayList<String>();
+					columnTitleList.add("Artist");
+					columnTitleList.add("Track");
+					columnTitleList.add("Type");
+					columnTitleList.add("Quantity");
+					columnTitleList.add("Income");
+					columnTitleList.add("Artist income");
+					columnTitleList.add("Company income");
+					
+					TableModel model = new ExternalReportTableModel(dataRowList, columnTitleList);
+					table.setDefaultRenderer(Object.class, new ExternalReportTableCellRenderer());
+					table.setModel(model);
+					
+					
+					double sum = 0;
+					for(int i = 0; i < model.getRowCount(); i++){
+						sum += dataRowList.get(i).getIncome();
+					}
+					lblTotalsum.setText(String.format("%1$,.2f", sum));
+					
+				}
+			});
+			panel.add(btnExternalReport);
 		}
 		{
 			JToolBar toolBar = new JToolBar();
