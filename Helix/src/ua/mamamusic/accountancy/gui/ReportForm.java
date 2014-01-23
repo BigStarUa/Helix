@@ -12,6 +12,7 @@ import ua.mamamusic.accountancy.IconFactory;
 import ua.mamamusic.accountancy.WriteExcel;
 import ua.mamamusic.accountancy.model.Artist;
 import ua.mamamusic.accountancy.model.Distributor;
+import ua.mamamusic.accountancy.model.ExternalReportTableModel;
 import ua.mamamusic.accountancy.model.GenericComboBoxModel;
 import ua.mamamusic.accountancy.model.GenericListModel;
 import ua.mamamusic.accountancy.model.ProductRow;
@@ -350,8 +351,8 @@ public class ReportForm extends AbstractJPanel {
 			dateEnd = new JDatePickerImpl(pan2, ab);
 			horizontalBox_1.add((Component)dateEnd);
 			
-			JButton btnGetData = new JButton("Get data", IconFactory.TABLES32_ICON);
-			btnGetData.setBounds(58, 517, 117, 35);
+			JButton btnGetData = new JButton("Report", IconFactory.TABLES32_ICON);
+			btnGetData.setBounds(139, 517, 101, 35);
 			btnGetData.addActionListener(new ActionListener() {	
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -457,6 +458,35 @@ public class ReportForm extends AbstractJPanel {
 			comboBoxRights.setModel(new DefaultComboBoxModel(new String[] {"Select all", "Author", "Related"}));
 			comboBoxRights.setEnabled(false);
 			panel_3.add(comboBoxRights);
+			
+			JButton btnExternalReport = new JButton("External report");
+			btnExternalReport.setBounds(10, 517, 105, 35);
+			btnExternalReport.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					ProductRowManager drm = new ProductRowManagerImpl();
+					List<Artist> artList = list.getSelectedValuesList();
+					Distributor distr = null;
+					Artist[] array = artList.toArray(new Artist[artList.size()]);
+					Date start = ((Calendar)dateStart.getModel().getValue()).getTime();
+					Date end = ((Calendar)dateEnd.getModel().getValue()).getTime();
+					
+					List<Object[]> dataRowList = drm.loadDataForExternalReport(array, distr, start, end);
+					
+					TableModel model = new ExternalReportTableModel(dataRowList);
+					table.setModel(model);
+					
+					int incomeColumnIndex = 5;
+					double sum = 0;
+					for(int i = 0; i < model.getRowCount(); i++){
+						sum += (double)dataRowList.get(i)[incomeColumnIndex];
+					}
+					lblTotalsum.setText(String.format("%1$,.2f", sum));
+					
+				}
+			});
+			panel.add(btnExternalReport);
 		}
 		{
 			JToolBar toolBar = new JToolBar();

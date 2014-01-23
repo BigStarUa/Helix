@@ -84,6 +84,7 @@ public class ArtistForm extends AbstractJDialog implements ArtistAliasListListen
 	private JToolBar toolBarTrack;
 	private JToolBar toolBarAlias;
 	private JList<Track> trackList;
+	private JTextField txtIncomepercent;
 
 	public ArtistForm(Window owner, String title, ModalityType modalityType, Artist artist, ArtistsListListener listener) {
 		super(owner, title, modalityType);
@@ -99,6 +100,7 @@ public class ArtistForm extends AbstractJDialog implements ArtistAliasListListen
 		txtName.setText(artist.getName());
 		if(artist != null && artist.getId() > 0){
 			lblProductname.setText(artist.getName());
+			txtIncomepercent.setText(String.valueOf(artist.getIncomePercent()));
 			
 			List<ArtistAlias> list;
 			if(artist.getAliasSet() != null){
@@ -192,17 +194,33 @@ public class ArtistForm extends AbstractJDialog implements ArtistAliasListListen
 					tabbedPane.addTab("Main", null, panelMain, null);
 					panelMain.setLayout(null);
 					
-					JLabel lblName = new JLabel("Name");
+					JLabel lblName = new JLabel("Name:");
 					lblName.setFont(new Font("Tahoma", Font.PLAIN, 16));
-					lblName.setBounds(10, 27, 46, 14);
+					lblName.setBounds(10, 27, 79, 20);
 					panelMain.add(lblName);
 				
 					
 					txtName = new JTextField();
 					txtName.setFont(new Font("Tahoma", Font.PLAIN, 14));
-					txtName.setBounds(119, 22, 191, 25);
+					txtName.setBounds(143, 22, 191, 25);
 					panelMain.add(txtName);
 					txtName.setColumns(10);
+					
+					JLabel lblPercentOfIncome = new JLabel("Income percent:");
+					lblPercentOfIncome.setFont(new Font("Tahoma", Font.PLAIN, 16));
+					lblPercentOfIncome.setBounds(10, 58, 127, 25);
+					panelMain.add(lblPercentOfIncome);
+					
+					txtIncomepercent = new JTextField();
+					txtIncomepercent.setFont(new Font("Tahoma", Font.PLAIN, 14));
+					txtIncomepercent.setBounds(143, 58, 86, 24);
+					panelMain.add(txtIncomepercent);
+					txtIncomepercent.setColumns(10);
+					
+					JLabel lblMax = new JLabel("max(100)");
+					lblMax.setFont(new Font("Tahoma", Font.PLAIN, 16));
+					lblMax.setBounds(239, 61, 69, 18);
+					panelMain.add(lblMax);
 				}
 				{
 					JPanel panelAlias = new JPanel();
@@ -346,9 +364,16 @@ public class ArtistForm extends AbstractJDialog implements ArtistAliasListListen
 				okButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						pushDataToProduct();
-						listener.saveArtist(artist);
-						dispose();
+						try {
+							pushDataToProduct();
+							listener.saveArtist(artist);
+							dispose();
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(ArtistForm.this,
+								    "Error! Check form data!",
+								    "Warning",
+								    JOptionPane.WARNING_MESSAGE);
+						}
 					}
 				});
 				buttonPane.add(okButton);
@@ -368,9 +393,13 @@ public class ArtistForm extends AbstractJDialog implements ArtistAliasListListen
 		}
 	}
 	
-	private void pushDataToProduct(){
-		try{
+	private void pushDataToProduct() throws Exception{
 			artist.setName(txtName.getText());
+			
+			int incomePercent = Integer.parseInt(txtIncomepercent.getText());
+			if(incomePercent > 100 || incomePercent < 0) throw new Exception();
+			
+			artist.setIncomePercent(incomePercent);
 			
 			Set<ArtistAlias> set = new HashSet<ArtistAlias>();
 			set.addAll(model.getList());
@@ -379,9 +408,6 @@ public class ArtistForm extends AbstractJDialog implements ArtistAliasListListen
 			Set<Track> trackSet = new HashSet<Track>();
 			trackSet.addAll(trackListModel.getList());
 			artist.setTrackSet(trackSet);
-		}catch(Exception e){
-			
-		}
 	
 	}
 

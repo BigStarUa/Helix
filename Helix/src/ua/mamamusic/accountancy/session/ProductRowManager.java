@@ -31,4 +31,6 @@ public interface ProductRowManager {
 	public List<Object[]> loadDataRowsByCriterias(Artist[] artList, Distributor distributor, TrackType type, Date start, Date end, boolean groupDistrib, boolean groupType);
 
 	public List<Object[]> loadData(Artist[] artList, Distributor distributor, TrackType type, Date start, Date end, boolean groupDistrib, boolean groupType, boolean groupDate, boolean groupRight, TRightType rightType);
+	
+	public List<Object[]> loadDataForExternalReport(Artist[] artList, Distributor distributor, Date start, Date end);
 }
