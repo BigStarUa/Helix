@@ -213,7 +213,7 @@ public class ReportForm extends AbstractJPanel {
 			toolBar.setBackground(Color.WHITE);
 			panel_5.add(toolBar, BorderLayout.NORTH);
 			
-			JButton btnSelectall = new JButton("SelectAll");
+			JButton btnSelectall = new JButton(IconFactory.CHECKBOX_CHECKED16_ICON);
 			btnSelectall.setFocusable(false);
 			btnSelectall.addActionListener(new ActionListener() {
 				
@@ -224,7 +224,7 @@ public class ReportForm extends AbstractJPanel {
 			});
 			toolBar.add(btnSelectall);
 			
-			JButton btnDeselectall = new JButton("DeselectAll");
+			JButton btnDeselectall = new JButton(IconFactory.CHECKBOX_UNCHECKED16_ICON);
 			btnDeselectall.setFocusable(false);
 			btnDeselectall.addActionListener(new ActionListener() {
 				

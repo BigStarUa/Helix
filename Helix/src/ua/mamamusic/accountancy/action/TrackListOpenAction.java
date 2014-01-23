@@ -1,5 +1,6 @@
 package ua.mamamusic.accountancy.action;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import ua.mamamusic.accountancy.AbstractJPanel;
@@ -7,6 +8,7 @@ import ua.mamamusic.accountancy.gui.ArtistsList;
 import ua.mamamusic.accountancy.gui.DistributorsList;
 import ua.mamamusic.accountancy.gui.TabPane;
 import ua.mamamusic.accountancy.gui.TrackList;
+import ua.mamamusic.accountancy.gui.UploadForm;
 
 public class TrackListOpenAction extends OpenAction {
 	
@@ -25,12 +27,23 @@ public class TrackListOpenAction extends OpenAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		TabPane tabbedPane = getTabbedPane();
-		component = TrackList.getInstance();
-		if(isComponentExist()){
+		//component = new TrackList();
+		component = isExist(tabbedPane);
+		if(component != null){
 			tabbedPane.setSelectedComponent(component);
 		}else{
-			tabbedPane.addClosableTab(component, title);
+			tabbedPane.addClosableTab(new TrackList(), title);
 		}
+	}
+	
+	
+	private AbstractJPanel isExist(TabPane tabbedPane){
+		for(Component comp : tabbedPane.getComponents()){
+			if(comp instanceof TrackList){
+				return (AbstractJPanel)comp;
+			}
+		}
+		return null;
 	}
 	
 	@Override

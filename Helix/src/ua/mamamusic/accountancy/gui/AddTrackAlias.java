@@ -75,12 +75,24 @@ public class AddTrackAlias extends JDialog implements TracksListListener{
 	 */
 	public AddTrackAlias(Window owner, DataRow product, UploadFormListener listener) {
 		super(owner, product.getArtist().getName(), Dialog.ModalityType.DOCUMENT_MODAL);
-		SortedSet<Track> set = new TreeSet<>(product.getArtist().getTrackSet());
-		this.trackList = new ArrayList<Track>(set);
+		//SortedSet<Track> set = new TreeSet<>(product.getArtist().getTrackSet());
+		//this.trackList = new ArrayList<Track>(set);
+		
+		
+		this.trackList = new ArrayList<Track>();
 		this.aliasName = product.getColumnTrack();
 		this.artist = product.getArtist();
 		this.listener = listener;
 		this.product = product;
+		for(Track track : TrackManagerImpl.TRACK_LIST_ORDERED){
+			for(TRight right : track.getRightSet()){
+				if(right.getArtist().getId() == artist.getId()){
+					trackList.add(track);
+					break;
+				}
+			}
+		}
+		
 		init();
 		populateForm();
 		

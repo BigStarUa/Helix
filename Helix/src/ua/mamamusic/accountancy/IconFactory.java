@@ -41,4 +41,6 @@ public class IconFactory {
 	public static final Icon START32_ICON = new ImageIcon(IconFactory.class.getResource("icon/start32.png"));
 	public static final Icon TRASH32_ICON = new ImageIcon(IconFactory.class.getResource("icon/trash32.png"));
 	public static final Icon RELOAD32_ICON = new ImageIcon(IconFactory.class.getResource("icon/reload32.png"));
+	public static final Icon CHECKBOX_CHECKED16_ICON = new ImageIcon(IconFactory.class.getResource("icon/checkbox_checked16.png"));
+	public static final Icon CHECKBOX_UNCHECKED16_ICON = new ImageIcon(IconFactory.class.getResource("icon/checkbox_unchecked16.png"));
 }

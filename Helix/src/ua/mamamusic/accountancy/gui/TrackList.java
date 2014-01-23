@@ -76,7 +76,7 @@ public class TrackList extends AbstractJPanel implements TracksListListener{
 	private JPanel panel;
 	private JLabel lblFilter;
 
-	private TrackList(){
+	public TrackList(){
 		setLayout(new BorderLayout());
 		window = SwingUtilities.getWindowAncestor(TrackList.this);
 		
@@ -143,9 +143,9 @@ public class TrackList extends AbstractJPanel implements TracksListListener{
 	}
 	
 	public static synchronized TrackList getInstance(){
-		if(artistList == null){
+		//if(artistList == null){
 			artistList = new TrackList();
-		}
+		//}
 		return artistList;
 	}
 

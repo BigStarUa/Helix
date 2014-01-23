@@ -19,7 +19,7 @@ import ua.mamamusic.accountancy.model.Track;
 public class TrackManagerImpl implements TrackManager{
 
 	private TrackDAO trackDAO = new TrackDAOimpl();
-	
+	public static List<Track> TRACK_LIST_ORDERED;
 	@Override
 	public Track findTrackById(long id) {
 		Track track = null;
@@ -39,6 +39,7 @@ public class TrackManagerImpl implements TrackManager{
 			HibernateUtil.beginTransaction();
 			trackDAO.save(track);
 			HibernateUtil.commitTransaction();
+			TRACK_LIST_ORDERED.add(track);
 		}catch(HibernateException he){
 			HibernateUtil.rollbackTransaction();
 		}
@@ -71,6 +72,7 @@ public class TrackManagerImpl implements TrackManager{
 	
 	@Override
 	public List<Track> loadAllTracksOrderedBy(String criteria) {
+		if(TRACK_LIST_ORDERED != null) return TRACK_LIST_ORDERED;
 		List<Track> list = null;
 		try{
 			HibernateUtil.beginTransaction();
@@ -81,7 +83,8 @@ public class TrackManagerImpl implements TrackManager{
 		}catch(HibernateException he){
 			
 		}
-		return list;
+		TRACK_LIST_ORDERED = list;
+		return TRACK_LIST_ORDERED;
 	}
 
 	@Override

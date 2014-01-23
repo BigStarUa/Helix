@@ -27,25 +27,22 @@ public class TrashFormOpenAction extends OpenAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		TabPane tabbedPane = getTabbedPane();
-		//component = UploadForm.getInstance();
-		component = new TrashForm();
-		
-		
-		if(isExist(tabbedPane)){
+		component = isExist(tabbedPane);
+		if(component != null){
 			tabbedPane.setSelectedComponent(component);
 		}else{
-			tabbedPane.addClosableTab(component, title);
+			tabbedPane.addClosableTab(new TrashForm(), title);
 		}
 	}
 	
 	
-	private boolean isExist(TabPane tabbedPane){
+	private AbstractJPanel isExist(TabPane tabbedPane){
 		for(Component comp : tabbedPane.getComponents()){
 			if(comp instanceof TrashForm){
-				return true;
+				return (AbstractJPanel)comp;
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	@Override

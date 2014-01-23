@@ -7,6 +7,7 @@ import ua.mamamusic.accountancy.AbstractJPanel;
 import ua.mamamusic.accountancy.gui.DistributorsList;
 import ua.mamamusic.accountancy.gui.ReportForm;
 import ua.mamamusic.accountancy.gui.TabPane;
+import ua.mamamusic.accountancy.gui.TrashForm;
 import ua.mamamusic.accountancy.gui.UploadForm;
 
 public class ReportFormOpenAction extends OpenAction {
@@ -26,25 +27,22 @@ public class ReportFormOpenAction extends OpenAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		TabPane tabbedPane = getTabbedPane();
-		//component = UploadForm.getInstance();
-		component = new ReportForm();
-		
-		
-		if(isExist(tabbedPane)){
+		component = isExist(tabbedPane);
+		if(component != null){
 			tabbedPane.setSelectedComponent(component);
 		}else{
-			tabbedPane.addClosableTab(component, title);
+			tabbedPane.addClosableTab(new ReportForm(), title);
 		}
 	}
 	
 	
-	private boolean isExist(TabPane tabbedPane){
+	private AbstractJPanel isExist(TabPane tabbedPane){
 		for(Component comp : tabbedPane.getComponents()){
 			if(comp instanceof ReportForm){
-				return true;
+				return (AbstractJPanel)comp;
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	@Override
