@@ -35,4 +35,5 @@ public interface ProductRowManager {
 	public List<ProductRow> loadDataForExternalReport(Artist[] artList, Distributor distributor, Date start, Date end);
 	
 	public List<ProductRow> loadQuantityForExternalReport(Artist[] artList, Distributor distributor, Date start, Date end);
+
 }

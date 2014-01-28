@@ -264,6 +264,7 @@ public class ProductRowManagerImpl implements ProductRowManager{
 		}
 		return list;
 	}
+	
 
 	@Override
 	public void deleteProductRowList(List<ProductRow> list) {
