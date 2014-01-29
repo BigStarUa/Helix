@@ -170,6 +170,7 @@ public class UploadForm extends AbstractJPanel implements UploadFormListener{
 		
 		//Creating table
 		table = new JTable();
+		table.getTableHeader().setReorderingAllowed(false);
 //		table.setGridColor(Color.LIGHT_GRAY);
 //		table.setFont(new Font("Tahoma", Font.PLAIN, 14));
 //		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

@@ -25,7 +25,7 @@ public class ExternalReportTableModel extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-			return columnTitleList.size();
+		return columnTitleList.size();
 	}
 
 	@Override

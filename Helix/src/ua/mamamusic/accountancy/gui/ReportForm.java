@@ -574,7 +574,7 @@ public class ReportForm extends AbstractJPanel {
 				panel.setBorder(new EmptyBorder(0, 0, 0, 30));
 				buttonPane.add(panel);
 				
-				JLabel lblSum = new JLabel("Total sum:");
+				JLabel lblSum = new JLabel("Total income:");
 				panel.add(lblSum);
 				
 				lblTotalsum = new JLabel("");
